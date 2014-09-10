@@ -227,9 +227,11 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 							// Slide to the top
 							mState = IDEL;
 							updateHeaderViewByState();
-						}
-						mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()) + (tempY - mStartY) / OFFSET_RATIO, 0, 0);
-                        mHeaderView.setStateContentPadding(0, 0, 0, (tempY - mStartY) / OFFSET_RATIO > mHeaderView.getStateViewHeight() ? mHeaderView.getVisableHeight() : mHeaderView.getVisableHeight() + (tempY - mStartY) / OFFSET_RATIO - mHeaderView.getStateViewHeight());
+						} else {
+
+                        mHeaderView.setStateContentPadding(0, 0, 0, (tempY - mStartY) / OFFSET_RATIO > mHeaderView.getStateViewHeight() ? mHeaderView.getVisableHeight() : mHeaderView.getVisableHeight() + (tempY - mStartY) / OFFSET_RATIO);
+                        }
+//						mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()) + (tempY - mStartY) / OFFSET_RATIO, 0, 0);
 						break;
 					case PULL_TO_LOAD:
 						setSelection(0);
@@ -244,8 +246,8 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 						} else {
 //							mHeaderView.setPadding(0, (tempY - mStartY) / OFFSET_RATIO - mHeaderViewHeight, 0, 0);
 							mHeaderView.setPadding(0, (tempY - mStartY) / OFFSET_RATIO - (mHeaderView.getViewHeight() - mHeaderView.getVisableHeight()), 0, 0);
+//                        mHeaderView.setStateContentPadding(0, 0, 0, (tempY - mStartY) / OFFSET_RATIO > mHeaderView.getStateViewHeight() ? mHeaderView.getVisableHeight() : mHeaderView.getVisableHeight() + (tempY - mStartY) / OFFSET_RATIO);
 						}
-						mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()) + (tempY - mStartY) / OFFSET_RATIO, 0, 0);
 						break;
 					case IDEL:
 						if (tempY - mStartY > 0) {
