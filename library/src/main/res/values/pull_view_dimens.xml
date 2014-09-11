@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- HeaderView -->
+    <dimen name="pullview_header_arrow_content_minSize">50dip</dimen>
+    <dimen name="pullview_header_progress_size">30dip</dimen>
+    <dimen name="pullview_header_title_margingLeft">10dip</dimen>
+    <dimen name="pullview_header_title_textSize">18sp</dimen>
+    <dimen name="pullview_header_label_textSize">16sp</dimen>
+    <dimen name="pullview_header_label_paddingTop">3dip</dimen>
+
+    <!-- FooterView -->
+    <dimen name="pullview_footer_arrow_content_minSize">50dip</dimen>
+    <dimen name="pullview_footer_progress_size">30dip</dimen>
+    <dimen name="pullview_footer_title_margingLeft">10dip</dimen>
+    <dimen name="pullview_footer_title_textSize">18sp</dimen>
+
+    <!-- HeaderView2 -->
+    <dimen name="pullview_header2_top_content_minHeight">200dip</dimen>
+</resources>

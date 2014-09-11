@@ -28,5 +28,11 @@ public interface OnLoadMoreListener {
 	 * Load more
 	 */
 	public void onLoadMore();
+
+    /**
+     * On error
+     * @param errorCode
+     */
+    public void onError(int errorCode);
 	
 }

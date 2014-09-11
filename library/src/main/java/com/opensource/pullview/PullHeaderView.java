@@ -18,14 +18,10 @@
 package com.opensource.pullview;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -86,62 +82,70 @@ public class PullHeaderView extends LinearLayout {
 	 */
 	private void initView(Context context) {
 		
-		mHeaderView = new LinearLayout(context);
-		mHeaderView.setOrientation(LinearLayout.HORIZONTAL);
-		//setBackgroundColor(Color.rgb(225, 225,225));
-		mHeaderView.setGravity(Gravity.CENTER); 
-		mHeaderView.setPadding(0, 5, 0, 5);
-		
-		FrameLayout headImage =  new FrameLayout(context);
-		mArrowImageView = new ImageView(context);
-		mArrowImageView.setImageResource(R.drawable.pullview_down_arrow);
-		
-		//style="?android:attr/progressBarStyleSmall" default style
-		mProgress = new ProgressBar(context,null,android.R.attr.progressBarStyle);
-		mProgress.setVisibility(View.GONE);
-		
-		//Arrow icon and progress
-		LayoutParams iconLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		iconLp.gravity = Gravity.CENTER;
-		iconLp.width = 50;
-		iconLp.height = 50;
-		headImage.addView(mArrowImageView,iconLp);
-		headImage.addView(mProgress,iconLp);
-		
-		//Header text
-		LinearLayout headTextLayout  = new LinearLayout(context);
-		mTvTitle = new TextView(context);
-		mTvLabel = new TextView(context);
-		headTextLayout.setOrientation(LinearLayout.VERTICAL);
-		headTextLayout.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
-		headTextLayout.setPadding(12,0,0,0);
-		LayoutParams textLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		headTextLayout.addView(mTvTitle,textLp);
-		headTextLayout.addView(mTvLabel,textLp);
-		mTvTitle.setTextColor(Color.argb(255, 50, 50, 50));
-		mTvLabel.setTextColor(Color.argb(255, 255, 110, 0));
-		mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-		mTvLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-		
-		LayoutParams contentLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		contentLp.gravity = Gravity.CENTER;
-		contentLp.bottomMargin = 5;
-		contentLp.topMargin = 5;
-		
-		LinearLayout headerLayout = new LinearLayout(context);
-		headerLayout.setOrientation(LinearLayout.HORIZONTAL);
-		headerLayout.setGravity(Gravity.CENTER); 
-		
-		headerLayout.addView(headImage,contentLp);
-		headerLayout.addView(headTextLayout,contentLp);
-		
-		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		lp.gravity = Gravity.CENTER;
-		
-		mHeaderView.addView(headerLayout,lp);
-		
-		this.addView(mHeaderView,lp);
-		//Get height of this header view.
+//		mHeaderView = new LinearLayout(context);
+//		mHeaderView.setOrientation(LinearLayout.HORIZONTAL);
+//		//setBackgroundColor(Color.rgb(225, 225,225));
+//		mHeaderView.setGravity(Gravity.CENTER);
+//		mHeaderView.setPadding(0, 5, 0, 5);
+//
+//		FrameLayout headImage =  new FrameLayout(context);
+//		mArrowImageView = new ImageView(context);
+//		mArrowImageView.setImageResource(R.drawable.pullview_down_arrow);
+//
+//		//style="?android:attr/progressBarStyleSmall" default style
+//		mProgress = new ProgressBar(context,null,android.R.attr.progressBarStyle);
+//		mProgress.setVisibility(View.GONE);
+//
+//		//Arrow icon and progress
+//		LayoutParams iconLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		iconLp.gravity = Gravity.CENTER;
+//		iconLp.width = 50;
+//		iconLp.height = 50;
+//		headImage.addView(mArrowImageView,iconLp);
+//		headImage.addView(mProgress,iconLp);
+//
+//		//Header text
+//		LinearLayout headTextLayout  = new LinearLayout(context);
+//		mTvTitle = new TextView(context);
+//		mTvLabel = new TextView(context);
+//		headTextLayout.setOrientation(LinearLayout.VERTICAL);
+//		headTextLayout.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
+//		headTextLayout.setPadding(12,0,0,0);
+//		LayoutParams textLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		headTextLayout.addView(mTvTitle,textLp);
+//		headTextLayout.addView(mTvLabel,textLp);
+//		mTvTitle.setTextColor(Color.argb(255, 50, 50, 50));
+//		mTvLabel.setTextColor(Color.argb(255, 255, 110, 0));
+//		mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+//		mTvLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+//
+//		LayoutParams contentLp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+//		contentLp.gravity = Gravity.CENTER;
+//		contentLp.bottomMargin = 5;
+//		contentLp.topMargin = 5;
+//
+//		LinearLayout headerLayout = new LinearLayout(context);
+//		headerLayout.setOrientation(LinearLayout.HORIZONTAL);
+//		headerLayout.setGravity(Gravity.CENTER);
+//
+//		headerLayout.addView(headImage,contentLp);
+//		headerLayout.addView(headTextLayout,contentLp);
+//
+//		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+//		lp.gravity = Gravity.CENTER;
+//
+//		mHeaderView.addView(headerLayout,lp);
+//
+//		this.addView(mHeaderView,lp);
+
+        View.inflate(context, R.layout.layout_pullview_header, this);
+
+        mArrowImageView = (ImageView) findViewById(R.id.iv_pullview_header_arrow);
+        mProgress = (ProgressBar) findViewById(R.id.pb_pullview_header_progress);
+        mTvTitle = (TextView) findViewById(R.id.tv_pullview_header_title);
+        mTvLabel = (TextView) findViewById(R.id.tv_pullview_header_label);
+
+        //Get height of this header view.
 		ViewUtil.measureView(this);
 		mHeaderViewHeight = this.getMeasuredHeight();
 		

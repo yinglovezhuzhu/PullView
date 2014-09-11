@@ -45,10 +45,10 @@ public class PullHeaderView2 extends LinearLayout {
 
 	/** The head content height. */
 	private int mViewHeight;
-
+    /** The state view content height **/
     private int mStateViewHeight;
-
-    private int mVisableHeight;
+    /** The visible height **/
+    private int mVisibleHeight;
 
 	/**
 	 * Instantiates a new ab list view header.
@@ -78,7 +78,7 @@ public class PullHeaderView2 extends LinearLayout {
 	 */
 	private void initView(Context context) {
 
-        View.inflate(context, R.layout.layout_pull_listview_header2, this);
+        View.inflate(context, R.layout.layout_pullview_header2, this);
 
         mTopContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_top);
         mBackgroundContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_bg_content);
@@ -95,21 +95,35 @@ public class PullHeaderView2 extends LinearLayout {
         mIvBg.setLayoutParams(bgLayoutParams);
 
         ViewUtil.measureView(mViewContent);
-        mVisableHeight = mViewContent.getMeasuredHeight();
+        mVisibleHeight = mViewContent.getMeasuredHeight();
 
         ViewUtil.measureView(this);
         mViewHeight = this.getMeasuredHeight();
 
         ViewUtil.measureView(mStateContent);
         mStateViewHeight = mStateContent.getMeasuredHeight();
-        mStateContent.setPadding(0, 0, 0, mVisableHeight);
+        mStateContent.setPadding(0, mViewHeight - mVisibleHeight - mStateViewHeight, 0, 0);
 
 	}
 
+    /**
+     * Sets state view padding
+     * @param left
+     * @param top
+     * @param right
+     * @param bottom
+     */
     public void setStateContentPadding(int left, int top, int right, int bottom) {
         mStateContent.setPadding(left, top, right, bottom);
     }
 
+    /**
+     * Sets state view visibility
+     * @param visibility
+     */
+    public void setStateContentVisibility(int visibility) {
+        mStateContent.setVisibility(visibility);
+    }
 
 	/**
 	 * Gets the header height.
@@ -120,13 +134,28 @@ public class PullHeaderView2 extends LinearLayout {
 		return mViewHeight;
 	}
 
-
-    public int getVisableHeight() {
-        return mVisableHeight;
+    /**
+     * Gets visible height.
+     * @return
+     */
+    public int getVisibleHeight() {
+        return mVisibleHeight;
     }
 
+    /**
+     * Gets state view height
+     * @return
+     */
     public int getStateViewHeight() {
         return mStateViewHeight;
+    }
+
+    /**
+     * Gets ImageView to set background image.
+     * @return
+     */
+    public ImageView getBackgroudImageView() {
+        return mIvBg;
     }
 
 }

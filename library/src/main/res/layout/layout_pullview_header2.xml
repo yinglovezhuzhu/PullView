@@ -10,7 +10,9 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/pullview_header2_top_content_minHeight"
         android:gravity="bottom">
+        <!-- 这里设置的android:minHeight="200dip"是为了防止滑动到了顶部，状态调的View的paddingTop值小于0是会隐藏，如果是大屏手机，可以加大这个数 -->
         <!-- 这里可以添加一些最顶部显示的view，在头部全部View都被拉出来后，可以在这里添加一些默认的View -->
 
         <ImageView
@@ -62,9 +64,9 @@
     <LinearLayout
         android:id="@+id/ll_pull_listview_header_state_content"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/fl_pull_lsitview_header_content">
+        android:layout_alignTop="@+id/ll_pull_listview_header_top">
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

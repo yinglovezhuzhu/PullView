@@ -17,7 +17,6 @@
  */	
 package com.opensource.pullview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -28,8 +27,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import com.opensource.pullview.utils.DateUtil;
 
 /**
  * Usage A Custom ListView can be pull to refresh and load more<br>
@@ -46,17 +43,23 @@ import com.opensource.pullview.utils.DateUtil;
  */
 public class PullListView2 extends ListView implements IPullView, AbsListView.OnScrollListener {
 
+    private static final int DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE = 80;
+
 	private RotateAnimation mDownToUpAnimation;
 	private RotateAnimation mUpToDownAnimation;
 
 	//Make sure param mStartY only valued once in one touch event.
-	private boolean mIsRecored;
+	private boolean mRecording;
 	private int mStartY;
 	private int mState;
 	private boolean mIsBack;
 
 	private PullHeaderView2 mHeaderView;
-	private PullFooterView2 mFooterView;
+	private PullFooterView mFooterView;
+
+    private int mHeaderViewHeight;
+    private int mHeaderViewVisiableHeight;
+    private int mHeaderViewStateHeight;
 
 	private int mFooterViewHeight;
 
@@ -64,15 +67,17 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	private int mLastItemIndex;
 	private int mTotalItemCount;
 
+    /** The distance pull down to refresh **/
+    private int mMinPullDownDist = DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE;
+
 	/** Whether it can refresh. */
 	private boolean mRefreshable = false;
 	/** Whether it can load more data. */
 	private boolean mLoadMoreable = false;
 
-	private String mLastRefreshTime = "";
-	private int mHeaderLebelVisiblity = View.VISIBLE;
-
 	private LoadMode mLoadMode = LoadMode.AUTO_LOAD;
+
+    private boolean mRefreshing = false;
 
 	private OnRefreshListener mRefreshListener;
 	private OnLoadMoreListener mLoadMoreListener;
@@ -132,13 +137,11 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if(scrollState == SCROLL_STATE_IDLE && mLastItemIndex == mTotalItemCount && mState == IDEL) {
-			if(mLoadMoreable) {
-				if(mLoadMode == LoadMode.AUTO_LOAD) {
-					mState = LOADING;
-					updateFooterViewByState();
-					setSelection(mTotalItemCount);
-					loadMore();
-				}
+			if(mLoadMoreable && mLoadMode == LoadMode.AUTO_LOAD) {
+                setSelection(mTotalItemCount);
+                loadMore();
+                mState = LOADING;
+                updateFooterViewByState();
 			}
 		}
 		if(null != mScrollListener) {
@@ -146,39 +149,137 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 		}
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			mStartY = (int) event.getY();
-			if(!mIsRecored) {
-				if(mRefreshable && mFirstItemIndex == 0) {
-					mIsRecored = true;
-				} else if(mLoadMoreable && mLastItemIndex == mTotalItemCount) {
-					mIsRecored = true;
-				}
+			if(!mRecording) {
+                mRecording = mFirstItemIndex == 0 || mLastItemIndex == mTotalItemCount;
 			}
             break;
+        case MotionEvent.ACTION_MOVE:
+            int tempY = (int) event.getY();
+            if(mFirstItemIndex == 0) {
+                if (!mRecording) {
+                    mRecording = true;
+                    mStartY = tempY;
+                }
+                int distY = tempY - mStartY;
+                int trueDistY = distY / OFFSET_RATIO;
+//                if (mState != LOADING && mRecording) {
+                if (mRecording) {
+                    // Ensure that the process of setting padding, current position has always been at the header,
+                    // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
+                    switch (mState) {
+                        case RELEASE_TO_LOAD: // Release to load data
+                            setSelection(mFirstItemIndex);
+                            // Slide up, header part was covered, but not all be covered(Pull up to cancel)
+                            if (distY > 0 && (trueDistY < mMinPullDownDist)) {
+                                mState = PULL_TO_LOAD;
+                            } else if (distY <= 0) {
+                                // Slide to the top
+                                mState = IDEL;
+                            }
+
+                            updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight + trueDistY);
+                            break;
+                        case PULL_TO_LOAD:
+                            setSelection(mFirstItemIndex);
+                            // Pull down to the state can enter RELEASE_TO_REFRESH
+                            if (distY <= 0) {
+                                mState = IDEL;
+                            } else if (trueDistY >= mMinPullDownDist) {
+                                mState = RELEASE_TO_LOAD;
+                                mIsBack = true;
+                            }
+                            updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight + trueDistY);
+                            break;
+                        case LOADING:
+                            if(distY > 0) {
+                                updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight + trueDistY);
+                            }
+                            break;
+                        case IDEL:
+                            if (distY > 0) {
+                                mState = PULL_TO_LOAD;
+                            }
+                            updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else if(mLastItemIndex == mTotalItemCount && mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable) {
+                if (!mRecording) {
+                    mRecording = true;
+                    mStartY = tempY;
+                }
+                if (mState != LOADING && mRecording) {
+                    // Ensure that the process of setting padding, current position has always been at the footer,
+                    // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
+                    switch (mState) {
+                        case RELEASE_TO_LOAD: // release-to-load
+                            setSelection(mTotalItemCount);
+                            // Slide down, header part was covered, but not all be covered(Pull down to cancel)
+                            if (((mStartY - tempY) / OFFSET_RATIO < mFooterViewHeight) && (mStartY - tempY) > 0) {
+                                mState = PULL_TO_LOAD;
+                                updateFooterViewByState();
+                            } else if (mStartY - tempY <= 0) { //Slide up(Pull up to make footer to show)
+                                mState = IDEL;
+                                updateFooterViewByState();
+                            } else {
+                                mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
+                            }
+                            break;
+                        case PULL_TO_LOAD:
+                            setSelection(mTotalItemCount);
+                            // Pull up to the state can enter RELEASE_TO_REFRESH
+                            if ((mStartY - tempY) / OFFSET_RATIO >= mFooterViewHeight) {
+                                mState = RELEASE_TO_LOAD;
+                                mIsBack = true;
+                                updateFooterViewByState();
+                            } else if (mStartY - tempY <= 0) {
+                                mState = IDEL;
+                                updateFooterViewByState();
+                            } else {
+                                mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
+                            }
+                            break;
+                        case IDEL:
+                            if (mStartY - tempY > 0) {
+                                mState = PULL_TO_LOAD;
+                            }
+                            updateFooterViewByState();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            break;
 		case MotionEvent.ACTION_UP:
-			if(mState != LOADING) {
-				if(mRefreshable && mFirstItemIndex == 0) {
+//			if(mState != LOADING) {
+//				if(mRefreshable && mFirstItemIndex == 0) {
+				if(mFirstItemIndex == 0) {
 					switch (mState) {
 					case IDEL:
 						//Do nothing.
+//						updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 						break;
 					case PULL_TO_LOAD:
 						//Pull to refresh.
 						mState = IDEL;
-						updateHeaderViewByState();
+						updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 						break;
 					case RELEASE_TO_LOAD:
 						//Release to refresh.
-						mState = LOADING;
-						updateHeaderViewByState();
 						refresh();
+						mState = LOADING;
+						updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 						break;
 					default:
+						updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 						break;
 					}
 				} else if(mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable && mLastItemIndex == mTotalItemCount) {
@@ -193,119 +294,17 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 						break;
 					case RELEASE_TO_LOAD:
 						//Release to load more data.
+						loadMore();
 						mState = LOADING;
 						updateFooterViewByState();
-						loadMore();
 						break;
 					default:
 						break;
 					}
 				}
-			}
-			mIsRecored = false;
+//			}
+			mRecording = false;
 			mIsBack = false;
-			break;
-		case MotionEvent.ACTION_MOVE:
-			int tempY = (int) event.getY();
-			if(mRefreshable && mFirstItemIndex == 0) {
-				if (!mIsRecored) {
-					mIsRecored = true;
-					mStartY = tempY;
-				}
-				if (mState != LOADING && mIsRecored) {
-					// Ensure that the process of setting padding, current position has always been at the header,
-					// or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
-					switch (mState) {
-					case RELEASE_TO_LOAD: // Release to load data
-						setSelection(0);
-						// Slide up, header part was covered, but not all be covered(Pull up to cancel)
-//						if (((tempY - mStartY) / OFFSET_RATIO < mHeaderView.getViewHeight() - mHeaderView.getVisableHeight()) && (tempY - mStartY) > 0) {
-						if (((tempY - mStartY) / OFFSET_RATIO < mHeaderView.getStateViewHeight()) && (tempY - mStartY) > 0) {
-							mState = PULL_TO_LOAD;
-							updateHeaderViewByState();
-						} else if (tempY - mStartY <= 0) {
-							// Slide to the top
-							mState = IDEL;
-							updateHeaderViewByState();
-						} else {
-
-                        mHeaderView.setStateContentPadding(0, 0, 0, (tempY - mStartY) / OFFSET_RATIO > mHeaderView.getStateViewHeight() ? mHeaderView.getVisableHeight() : mHeaderView.getVisableHeight() + (tempY - mStartY) / OFFSET_RATIO);
-                        }
-//						mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()) + (tempY - mStartY) / OFFSET_RATIO, 0, 0);
-						break;
-					case PULL_TO_LOAD:
-						setSelection(0);
-						// Pull down to the state can enter RELEASE_TO_REFRESH
-						if ((tempY - mStartY) / OFFSET_RATIO >= mHeaderView.getStateViewHeight()) {
-							mState = RELEASE_TO_LOAD;
-							mIsBack = true;
-							updateHeaderViewByState();
-						} else if (tempY - mStartY <= 0) {
-							mState = IDEL;
-							updateHeaderViewByState();
-						} else {
-//							mHeaderView.setPadding(0, (tempY - mStartY) / OFFSET_RATIO - mHeaderViewHeight, 0, 0);
-							mHeaderView.setPadding(0, (tempY - mStartY) / OFFSET_RATIO - (mHeaderView.getViewHeight() - mHeaderView.getVisableHeight()), 0, 0);
-//                        mHeaderView.setStateContentPadding(0, 0, 0, (tempY - mStartY) / OFFSET_RATIO > mHeaderView.getStateViewHeight() ? mHeaderView.getVisableHeight() : mHeaderView.getVisableHeight() + (tempY - mStartY) / OFFSET_RATIO);
-						}
-						break;
-					case IDEL:
-						if (tempY - mStartY > 0) {
-							mState = PULL_TO_LOAD;
-						}
-						updateHeaderViewByState();
-						break;
-					default:
-						break;
-					}
-				}
-			} else if(mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable && mLastItemIndex == mTotalItemCount) {
-				if (!mIsRecored) {
-					mIsRecored = true;
-					mStartY = tempY;
-				}
-				if (mState != LOADING && mIsRecored) {
-					// Ensure that the process of setting padding, current position has always been at the footer,
-					// or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
-					switch (mState) {
-					case RELEASE_TO_LOAD: // release-to-load
-						setSelection(mTotalItemCount);
-						// Slide down, header part was covered, but not all be covered(Pull down to cancel)
-						if (((mStartY - tempY) / OFFSET_RATIO < mFooterViewHeight) && (mStartY - tempY) > 0) {
-							mState = PULL_TO_LOAD;
-							updateFooterViewByState();
-						} else if (mStartY - tempY <= 0) { //Slide up(Pull up to make footer to show)
-							mState = IDEL;
-							updateFooterViewByState();
-						} else {
-							mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
-						}
-						break;
-					case PULL_TO_LOAD:
-						setSelection(mTotalItemCount);
-						// Pull up to the state can enter RELEASE_TO_REFRESH
-						if ((mStartY - tempY) / OFFSET_RATIO >= mFooterViewHeight) {
-							mState = RELEASE_TO_LOAD;
-							mIsBack = true;
-							updateFooterViewByState();
-						} else if (mStartY - tempY <= 0) {
-							mState = IDEL;
-							updateFooterViewByState();
-						} else {
-							mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
-						}
-						break;
-					case IDEL:
-						if (mStartY - tempY > 0) {
-							mState = PULL_TO_LOAD;
-						}
-						updateFooterViewByState();
-						break;
-					default:
-						break;
-					}
-				}
-			}
 			break;
 		default:
 			break;
@@ -346,6 +345,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	public void setOnRefreshListener(OnRefreshListener listener) {
 		this.mRefreshListener = listener;
 		mRefreshable = null != listener;
+        mHeaderView.setStateContentVisibility(mRefreshable ? View.VISIBLE : View.INVISIBLE);
 	}
 
 	/**
@@ -405,8 +405,9 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	 */
 	public void refreshCompleted() {
 		mState = IDEL;
-		mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
-		updateHeaderViewByState();
+        mRefreshing = false;
+        mRecording = false;
+		updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 	}
 	
 	/**
@@ -434,11 +435,17 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 		mUpToDownAnimation.setFillAfter(true);
 		
 		mHeaderView = new PullHeaderView2(context);
-		mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()), 0, 0);
+        mHeaderViewHeight = mHeaderView.getViewHeight();
+        mHeaderViewVisiableHeight = mHeaderView.getVisibleHeight();
+		mHeaderView.setPadding(0, mHeaderViewVisiableHeight - mHeaderViewHeight, 0, 0);
+        mHeaderViewStateHeight = mHeaderView.getStateViewHeight();
+        mMinPullDownDist = mHeaderViewStateHeight > DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE
+                ? mHeaderViewStateHeight : DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE; //下拉刷新需要滑动的距离
+		mHeaderView.setStateContentVisibility(mRefreshable ? View.VISIBLE : View.INVISIBLE);
+        addHeaderView(mHeaderView, null, false);
 //		mHeaderView.invalidate();
-		addHeaderView(mHeaderView, null, false);
 
-		mFooterView = new PullFooterView2(context);
+		mFooterView = new PullFooterView(context);
 		mFooterViewHeight = mFooterView.getViewHeight();
 		mFooterView.setPadding(0, 0, 0, -mFooterViewHeight);
 //		mFooterView.invalidate();
@@ -447,60 +454,29 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 		mState = IDEL;
 		super.setOnScrollListener(this);
 		
-		mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
 	}
 
 	/**
 	 * Update header view by state.
 	 */
-	private void updateHeaderViewByState() {
-		switch (mState) {
-		case RELEASE_TO_LOAD:
-//			mHeaderView.setArrowVisibility(View.VISIBLE);
-//			mHeaderView.setProgressVisibility(View.GONE);
-//			mHeaderView.setTitileVisibility(View.VISIBLE);
-//			mHeaderView.startArrowAnimation(mDownToUpAnimation);
-//			mHeaderView.setTitleText(R.string.pull_view_release_to_refresh);
-//			mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time) + mLastRefreshTime);
-			break;
-		case PULL_TO_LOAD:
-//			mHeaderView.setArrowVisibility(View.VISIBLE);
-//			mHeaderView.setProgressVisibility(View.GONE);
-//			mHeaderView.setTitileVisibility(View.VISIBLE);
-//
-//			if (mIsBack) {
-//				mIsBack = false;
-//				mHeaderView.startArrowAnimation(mUpToDownAnimation);
-//			}
-//			mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
-//			mHeaderView.setLabelText(getResources().getString(
-//					R.string.pull_view_refresh_time)
-//					+ mLastRefreshTime);
-			break;
-		case LOADING:
-			mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()), 0, 0);
-            mHeaderView.setStateContentPadding(0, 0, 0, mHeaderView.getVisableHeight() - mHeaderView.getStateViewHeight());
-//			mHeaderView.setArrowVisibility(View.GONE);
-//			mHeaderView.setProgressVisibility(View.VISIBLE);
-//			mHeaderView.setTitileVisibility(View.VISIBLE);
-//			mHeaderView.startArrowAnimation(null);
-//			mHeaderView.setTitleText(R.string.pull_view_refreshing);
-//			mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
-//					+ mLastRefreshTime);
-			break;
-		case IDEL:
-			mHeaderView.setPadding(0, (mHeaderView.getVisableHeight() - mHeaderView.getViewHeight()), 0, 0);
-            mHeaderView.setStateContentPadding(0, 0, 0, mHeaderView.getVisableHeight());
-//			mHeaderView.setProgressVisibility(View.GONE);
-//			mHeaderView.startArrowAnimation(null);
-//			mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
-//			mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
-//					+ mLastRefreshTime);
-			break;
-		default:
-			break;
-		}
-//		mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
+	private void updateHeaderViewByState(int paddingTop) {
+        switch (mState) {
+            case RELEASE_TO_LOAD:
+                mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
+                break;
+            case PULL_TO_LOAD:
+                mHeaderView.setStateContentPadding(0, mHeaderViewHeight - mHeaderViewVisiableHeight - mHeaderViewStateHeight, 0, 0);
+                break;
+            case LOADING:
+                mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
+                break;
+            case IDEL:
+                mHeaderView.setStateContentPadding(0, -paddingTop - mHeaderViewStateHeight, 0, 0);
+                break;
+            default:
+                break;
+        }
+        mHeaderView.setPadding(0, paddingTop, 0, 0);
 	}
 	
 	/**
@@ -550,16 +526,34 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	 */
 	private void loadMore() {
 		if(mLoadMoreListener != null) {
+            if(mState == LOADING) {
+                if(mRefreshing) {
+                    mLoadMoreListener.onError(OnRefreshListener.ERROR_CODE_REFRESHING);
+                } else {
+                    mLoadMoreListener.onError(OnRefreshListener.ERROR_CODE_LOADINGMORE);
+                }
+                return;
+            }
 			mLoadMoreListener.onLoadMore();
+            mRefreshing = false;
 		}
 	}
-	
+
 	/**
 	 * Refresh
 	 */
 	private void refresh() {
 		if (mRefreshListener != null) {
+            if(mState == LOADING) {
+                if(mRefreshing) {
+                    mRefreshListener.onError(OnRefreshListener.ERROR_CODE_REFRESHING);
+                } else {
+                    mRefreshListener.onError(OnRefreshListener.ERROR_CODE_LOADINGMORE);
+                }
+                return;
+            }
 			mRefreshListener.onRefresh();
+            mRefreshing = true;
 		}
 	}
 }

@@ -42,7 +42,8 @@ public class PullListView2Activity extends Activity {
 	private static final String TAG = "PullListViewActivity";
 
     private static final int MSG_REFLESH_DONE = 0x100;
-	private static final int MSG_LOAD_DONE = 0x101;
+    private static final int MSG_REFLESH_ERROR = 0x101;
+	private static final int MSG_LOAD_DONE = 0x102;
 
 
 	private PullListView2 mListView;
@@ -67,6 +68,8 @@ public class PullListView2Activity extends Activity {
                         mListView.refreshCompleted();
                         mListView.loadMoreCompleted(mDatas.size() < 50);
                     }
+                    break;
+                case MSG_REFLESH_ERROR:
                     break;
                 case MSG_LOAD_DONE:
                     if(null != mListView) {
@@ -102,13 +105,20 @@ public class PullListView2Activity extends Activity {
 		mListView.setAdapter(mAdapter);
 		
 		mListView.setOnRefreshListener(new OnRefreshListener() {
-			
+
 			@Override
 			public void onRefresh() {
-				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 1000);
+				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 3000);
 				Log.e(TAG, "Start refresh+=====================^_^");
 			}
-		});
+
+            @Override
+            public void onError(int errorCode) {
+                Log.e(TAG, "Refresh error============>>>> errorCode=" + errorCode);
+//				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_ERROR, 3000);
+//                mListView.refreshCompleted();
+            }
+        });
 		
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
 			
@@ -117,6 +127,11 @@ public class PullListView2Activity extends Activity {
 				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 1000);
 				Log.e(TAG, "Start load more+=====================^_^");
 			}
+
+            @Override
+            public void onError(int errorCode) {
+                Log.e(TAG, "Load more error==============>>> errorCode=" + errorCode);
+            }
 		});
 		
 //		mListView.onFirstLoadingData("正在加载");

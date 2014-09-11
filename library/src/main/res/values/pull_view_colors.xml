@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="pullview_black">#FF000000</color>
+    <color name="pullview_orange">#FFFF6E00</color>
+</resources>

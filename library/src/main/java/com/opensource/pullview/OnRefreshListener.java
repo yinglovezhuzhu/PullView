@@ -22,9 +22,19 @@ package com.opensource.pullview;
  * @author yinglovezhuzhu@gmail.com
  */
 public interface OnRefreshListener {
+
+    public static final int ERROR_CODE_REFRESHING = 0;
+
+    public static final int ERROR_CODE_LOADINGMORE = 1;
+
 	/**
 	 * On refresh.
 	 */
 	public void onRefresh();
+
+    /**
+     * On Error
+     */
+    public void onError(int errorCode);
 	
 }
