@@ -374,6 +374,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	 */
 	public void onFootLoading(CharSequence text) {
 		mState = LOADING;
+        mHeaderView.setStateContentVisibility(View.INVISIBLE);
 		mFooterView.setPadding(0, 0, 0, 0);
 		mFooterView.setArrowVisibility(View.GONE);
 		mFooterView.setProgressVisibility(View.VISIBLE);
@@ -389,6 +390,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 	 */
 	public void onFootLoading(int resId) {
 		mState = LOADING;
+        mHeaderView.setStateContentVisibility(View.INVISIBLE);
 		mFooterView.setPadding(0, 0, 0, 0);
 		mFooterView.setArrowVisibility(View.GONE);
 		mFooterView.setProgressVisibility(View.VISIBLE);
@@ -416,14 +418,16 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 		mState = IDEL;
         mRefreshing = false;
         mRecording = false;
+        mHeaderView.setStateContentVisibility(View.VISIBLE);
 		updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 	}
-	
+
 	/**
 	 * Load more complete
 	 */
 	public void loadMoreCompleted(boolean loadMoreable) {
 		mState = IDEL;
+        mHeaderView.setStateContentVisibility( View.VISIBLE);
 		updateFooterViewByState();
 		this.mLoadMoreable = loadMoreable;
 	}
@@ -473,19 +477,15 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
         switch (mState) {
             case RELEASE_TO_LOAD:
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
-                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             case PULL_TO_LOAD:
                 mHeaderView.setStateContentPadding(0, mHeaderViewHeight - mHeaderViewVisiableHeight - mHeaderViewStateHeight, 0, 0);
-                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             case LOADING:
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
-                mHeaderView.setStateContentVisibility(View.INVISIBLE);
                 break;
             case IDEL:
                 mHeaderView.setStateContentPadding(0, -paddingTop - mHeaderViewStateHeight, 0, 0);
-                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -550,6 +550,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
             }
 			mLoadMoreListener.onLoadMore();
             mRefreshing = false;
+            mHeaderView.setStateContentVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -568,6 +569,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
             }
 			mRefreshListener.onRefresh();
             mRefreshing = true;
+            mHeaderView.setStateContentVisibility(View.VISIBLE);
 		}
 	}
 }
