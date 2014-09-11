@@ -210,12 +210,14 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
                             break;
                     }
                 }
-            } else if(mLastItemIndex == mTotalItemCount && mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable) {
+//            } else if(mLastItemIndex == mTotalItemCount && mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable) {
+            } else if(mLastItemIndex == mTotalItemCount) {
                 if (!mRecording) {
                     mRecording = true;
                     mStartY = tempY;
                 }
-                if (mState != LOADING && mRecording) {
+//                if (mState != LOADING && mRecording) {
+                if (mRecording && mLoadMode == LoadMode.PULL_TO_LOAD) {
                     // Ensure that the process of setting padding, current position has always been at the footer,
                     // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
                     switch (mState) {
@@ -243,6 +245,11 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
                                 mState = IDEL;
                                 updateFooterViewByState();
                             } else {
+                                mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
+                            }
+                            break;
+                        case LOADING:
+                            if(mStartY - tempY > 0) {
                                 mFooterView.setPadding(0, 0, 0, (mStartY - tempY) / OFFSET_RATIO - mFooterViewHeight);
                             }
                             break;
@@ -282,10 +289,12 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 						updateHeaderViewByState(mHeaderViewVisiableHeight - mHeaderViewHeight);
 						break;
 					}
-				} else if(mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable && mLastItemIndex == mTotalItemCount) {
+//				} else if(mLastItemIndex == mTotalItemCount && mLoadMode == LoadMode.PULL_TO_LOAD && mLoadMoreable) {
+				} else if(mLastItemIndex == mTotalItemCount && mLoadMode == LoadMode.PULL_TO_LOAD) {
 					switch (mState) {
 					case IDEL:
 						//Do nothing.
+                        mFooterView.setPadding(0, 0, 0, 0);
 						break;
 					case PULL_TO_LOAD:
 						//Pull to load more data.
@@ -419,6 +428,7 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
 		this.mLoadMoreable = loadMoreable;
 	}
 
+
 	/**
 	 * Init views
 	 * @param context
@@ -463,15 +473,19 @@ public class PullListView2 extends ListView implements IPullView, AbsListView.On
         switch (mState) {
             case RELEASE_TO_LOAD:
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
+                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             case PULL_TO_LOAD:
                 mHeaderView.setStateContentPadding(0, mHeaderViewHeight - mHeaderViewVisiableHeight - mHeaderViewStateHeight, 0, 0);
+                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             case LOADING:
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
+                mHeaderView.setStateContentVisibility(View.INVISIBLE);
                 break;
             case IDEL:
                 mHeaderView.setStateContentPadding(0, -paddingTop - mHeaderViewStateHeight, 0, 0);
+                mHeaderView.setStateContentVisibility(View.VISIBLE);
                 break;
             default:
                 break;
