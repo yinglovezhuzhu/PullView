@@ -38,7 +38,7 @@ public class PullHeaderView extends LinearLayout {
 
 	/** The header view. */
 	private LinearLayout mHeaderView;
-	
+
 	/** The arrow image view. */
 	private ImageView mArrowImageView;
 	
@@ -92,6 +92,8 @@ public class PullHeaderView extends LinearLayout {
         //Get height of this header view.
 		ViewUtil.measureView(this);
 		mHeaderViewHeight = this.getMeasuredHeight();
+
+        mHeaderView = this;
 		
 	}
 
@@ -240,10 +242,10 @@ public class PullHeaderView extends LinearLayout {
 	}
 	
 	/**
-	 * 
+	 *
 	 * Set Background color
 	 * @param color
-	 * @throws 
+	 * @throws
 	 */
 	public void setBackgroundColor(int color){
 		mHeaderView.setBackgroundColor(color);
