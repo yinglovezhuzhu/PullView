@@ -34,4 +34,17 @@ public interface IPullView {
 	
 	public static final int ROTATE_ANIMATION_DURATION = 250;
 
+
+    /**
+     * The mode to load data(always use in load more data)<br/><br/>
+     *
+     * <p>{@link LoadMode#PULL_TO_LOAD} pull-to-loadmore<br>
+     * You need to pull up to load more data<br><br>
+     * <p>{@link LoadMode#AUTO_LOAD} auto-loadmore<br>
+     * When you scroll to the end of the PullView, it will auto load data, if it has more data.
+     */
+    public static enum LoadMode {
+        PULL_TO_LOAD, AUTO_LOAD,
+    }
+
 }

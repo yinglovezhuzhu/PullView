@@ -39,8 +39,8 @@ import com.opensource.pullview.utils.DateUtil;
  * <p>Pull-to-refresh and load-more can not doing at the same time.<br>
  * If pull-to-refresh is happening, you can't do load-more action befor pull-to refresh is finished.<br><br>
  * 
- * <p>You need to call {@link #refreshComplete()} when refresh thread finished,<br>
- * Similarly, You also need to call {@link #loadMoreComplete(boolean)} when load thread finished.<br>
+ * <p>You need to call {@link #refreshCompleted()} when refresh thread finished,<br>
+ * Similarly, You also need to call {@link #loadMoreCompleted(boolean)} when load thread finished.<br>
  * 
  * @author yinglovezhuzhu@gmail.com
  */
@@ -80,20 +80,6 @@ public class PullListView extends ListView implements IPullView, AbsListView.OnS
 	private OnRefreshListener mRefreshListener;
 	private OnLoadMoreListener mLoadMoreListener;
 	private OnScrollListener mScrollListener;
-
-	/**
-	 * The mode of load more.<br>
-	 * <p>{@link com.opensource.pullview.PullListView.LoadMode#PULL_TO_LOAD} pull-to-loadmore<br>
-	 * You need to pull to load more data<br><br>
-	 * <p>{@link com.opensource.pullview.PullListView.LoadMode#AUTO_LOAD} auto-loadmore<br>
-	 * When you scroll to the end of data list, it will auto load more data if has more data.
-	 * 
-	 * @author yinglovezhuzhu@gmail.com
-	 *
-	 */
-	public static enum LoadMode {
-		PULL_TO_LOAD, AUTO_LOAD, 
-	}
 
 	/**
 	 * Constructor

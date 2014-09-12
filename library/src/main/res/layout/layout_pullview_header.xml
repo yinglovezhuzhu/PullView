@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/pullview_up_arrow"/>
+            android:src="@drawable/pullview_down_arrow"/>
         <ProgressBar
             style="@android:style/Widget.ProgressBar"
             android:id="@+id/pb_pullview_header_progress"

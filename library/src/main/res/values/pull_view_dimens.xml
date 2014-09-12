@@ -12,7 +12,7 @@
     <!-- FooterView -->
     <dimen name="pullview_footer_arrow_content_minSize">50dip</dimen>
     <dimen name="pullview_footer_progress_size">30dip</dimen>
-    <dimen name="pullview_footer_title_margingLeft">10dip</dimen>
+    <dimen name="pullview_footer_title_padding">15dip</dimen>
     <dimen name="pullview_footer_title_textSize">18sp</dimen>
 
     <!-- HeaderView2 -->

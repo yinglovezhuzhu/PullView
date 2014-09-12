@@ -66,7 +66,11 @@ public class PullListView2Activity extends Activity {
                             mAdapter.notifyDataSetChanged();
                         }
                         mListView.refreshCompleted();
-                        mListView.loadMoreCompleted(mDatas.size() < 50);
+                        boolean loadMoreable = mDatas.size() < 50;
+                        mListView.loadMoreCompleted(loadMoreable);
+
+//                        mListView.loadMoreCompleted(mDatas.size() < 50);
+//                        mListView.loadMoreCompleted(false);
                     }
                     break;
                 case MSG_REFLESH_ERROR:
@@ -80,7 +84,11 @@ public class PullListView2Activity extends Activity {
                             mAdapter.notifyDataSetChanged();
                         }
                         mListView.refreshCompleted();
-                        mListView.loadMoreCompleted(mDatas.size() < 50);
+                        boolean loadMoreable = mDatas.size() < 50;
+                        mListView.loadMoreCompleted(loadMoreable);
+
+//                        mListView.loadMoreCompleted(mDatas.size() < 50);
+//                        mListView.loadMoreCompleted(false);
                     }
                     break;
                 default:
@@ -97,7 +105,8 @@ public class PullListView2Activity extends Activity {
 		setContentView(R.layout.activity_pull_listview2);
 		
 		mListView = (PullListView2) findViewById(R.id.pull_list_view2);
-		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
+//		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
+		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
 //		mListView.setHeaderLabelVisibility(View.VISIBLE);
 //		mListView.setLastRefreshTime(DateUtil.getYesterdayDate(getString(R.string.pull_view_date_format)));
 		
@@ -121,7 +130,7 @@ public class PullListView2Activity extends Activity {
         });
 		
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
-			
+
 			@Override
 			public void onLoadMore() {
 				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 1000);

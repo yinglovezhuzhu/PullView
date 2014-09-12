@@ -7,14 +7,14 @@
     android:gravity="center">
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="@dimen/pullview_footer_arrow_content_minSize"
-        android:minHeight="@dimen/pullview_footer_arrow_content_minSize">
+        android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/iv_pullview_footer_arrow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:minWidth="@dimen/pullview_footer_arrow_content_minSize"
+            android:minHeight="@dimen/pullview_footer_arrow_content_minSize"
             android:scaleType="centerInside"
             android:src="@drawable/pullview_up_arrow"/>
         <ProgressBar
@@ -28,8 +28,7 @@
         android:id="@+id/tv_pullview_footer_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/pullview_footer_title_margingLeft"
-        android:layout_marginStart="@dimen/pullview_footer_title_margingLeft"
+        android:padding="@dimen/pullview_footer_title_padding"
         android:singleLine="true"
         android:textSize="@dimen/pullview_footer_title_textSize"
         android:textColor="@color/pullview_black"/>
