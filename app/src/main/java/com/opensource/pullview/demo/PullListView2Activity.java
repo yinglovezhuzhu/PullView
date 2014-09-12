@@ -128,7 +128,7 @@ public class PullListView2Activity extends Activity {
 //                mListView.refreshCompleted();
             }
         });
-		
+
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
 
 			@Override

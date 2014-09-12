@@ -204,18 +204,22 @@ public class PullListView2 extends BasePullListView {
                         case PULL_TO_LOAD:
                             //Pull to refresh.
                             mState = IDEL;
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
-                            //Release to refresh.
-                            refresh();
-                            mState = LOADING;
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
+                            if (mRefreshable) {
+                                //Release to refresh.
+                                refresh();
+                                mState = LOADING;
+                            } else {
+                                mState = IDEL;
+                            }
+                            break;
+                        case LOADING:
                             break;
                         default:
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
                             break;
                     }
+                    updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
                 } else if (mLastItemIndex == mTotalItemCount) {
                     switch (mState) {
                         case IDEL:
@@ -356,7 +360,7 @@ public class PullListView2 extends BasePullListView {
 
     @Override
     public void loadMoreCompleted(boolean loadMoreable) {
-        super.loadMoreCompleted(loadMoreable);
+        super.loadMoreCompleted(null != mLoadMoreListener && loadMoreable);
         mHeaderView.setStateContentVisibility(View.VISIBLE);
     }
 

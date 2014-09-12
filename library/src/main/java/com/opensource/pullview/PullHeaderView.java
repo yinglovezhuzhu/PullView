@@ -166,10 +166,19 @@ public class PullHeaderView extends LinearLayout {
 	 * @param animation
 	 */
 	public void startArrowAnimation(Animation animation) {
-		mArrowImageView.clearAnimation();
-		if(null != animation) {
-			mArrowImageView.startAnimation(animation);
-		}
+        if(null == animation) {
+            mArrowImageView.clearAnimation();
+            return;
+        }
+        if(!animation.equals(mArrowImageView.getAnimation())) {
+            mArrowImageView.clearAnimation();
+            mArrowImageView.startAnimation(animation);
+        }
+
+//		mArrowImageView.clearAnimation();
+//		if(null != animation) {
+//			mArrowImageView.startAnimation(animation);
+//		}
 	}
 
 	/**

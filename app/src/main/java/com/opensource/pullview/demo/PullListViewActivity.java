@@ -93,9 +93,9 @@ public class PullListViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_list_view_ex);
+		setContentView(R.layout.activity_pull_listview);
 		
-		mListView = (PullListView) findViewById(R.id.list_view_ex);
+		mListView = (PullListView) findViewById(R.id.pull_list_view);
 		mListView.setLoadMode(PullListView.LoadMode.PULL_TO_LOAD);
 		mListView.setHeaderLabelVisibility(View.VISIBLE);
 		mListView.setLastRefreshTime(DateUtil.getYesterdayDate(getString(R.string.pull_view_date_format)));
@@ -114,7 +114,7 @@ public class PullListViewActivity extends Activity {
 		mListView.setAdapter(mAdapter);
 		
 		mListView.setOnRefreshListener(new OnRefreshListener() {
-			
+
 			@Override
 			public void onRefresh() {
 				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 3000);
@@ -128,7 +128,7 @@ public class PullListViewActivity extends Activity {
         });
 		
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
-			
+
 			@Override
 			public void onLoadMore() {
 				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
