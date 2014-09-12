@@ -40,7 +40,7 @@ import com.opensource.pullview.utils.DateUtil;
  * 
  * @author yinglovezhuzhu@gmail.com
  */
-public class PullScrollView extends ScrollView implements IPullView {
+public class PullScrollView_back extends ScrollView implements IPullView {
 
 	/** The Constant SCROLLBACK_HEADER. */
 	private final static int SCROLLBACK_HEADER = 0;
@@ -74,35 +74,35 @@ public class PullScrollView extends ScrollView implements IPullView {
 
 	/** The m scroll back. */
 	private int mScrollBack;
-	
+
 	/** The m state. */
 	private int mState = IDEL;
-	
+
 	private String mLastRefreshTime = "";
-	
+
 	/** The m rotate up anim. */
 	private Animation mRotateUpAnim;
-	
+
 	/** The m rotate down anim. */
 	private Animation mRotateDownAnim;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param context the context
 	 */
-	public PullScrollView(Context context) {
+	public PullScrollView_back(Context context) {
 		super(context);
 		initView(context);
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param context the context
 	 * @param attrs the attrs
 	 */
-	public PullScrollView(Context context, AttributeSet attrs) {
+	public PullScrollView_back(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView(context);
 	}

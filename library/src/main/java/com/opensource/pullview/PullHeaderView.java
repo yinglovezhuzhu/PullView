@@ -81,7 +81,7 @@ public class PullHeaderView extends LinearLayout {
 	 * @param context the context
 	 */
 	private void initView(Context context) {
-		
+
         View.inflate(context, R.layout.layout_pullview_header, this);
 
         mArrowImageView = (ImageView) findViewById(R.id.iv_pullview_header_arrow);
@@ -89,13 +89,14 @@ public class PullHeaderView extends LinearLayout {
         mTvTitle = (TextView) findViewById(R.id.tv_pullview_header_title);
         mTvLabel = (TextView) findViewById(R.id.tv_pullview_header_label);
 
+        //FIXME Delete this
+        mHeaderView = (LinearLayout) findViewById(R.id.ll_pullview_header);
+
         //Get height of this header view.
 		ViewUtil.measureView(this);
 		mHeaderViewHeight = this.getMeasuredHeight();
 
-        mHeaderView = this;
-		
-	}
+    }
 
 	/**
 	 * Set arrow image visibility
