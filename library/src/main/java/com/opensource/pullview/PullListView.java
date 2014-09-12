@@ -330,6 +330,9 @@ public class PullListView extends BasePullListView {
     @Override
     protected void loadMore() {
         if (mLoadMoreListener != null) {
+            if (mState == LOADING) {
+                return;
+            }
             mLoadMoreListener.onLoadMore();
         }
     }
@@ -337,6 +340,9 @@ public class PullListView extends BasePullListView {
     @Override
     protected void refresh() {
         if (mRefreshListener != null) {
+            if (mState == LOADING) {
+                return;
+            }
             mRefreshListener.onRefresh();
         }
     }

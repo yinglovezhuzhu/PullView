@@ -320,11 +320,6 @@ public class PullListView2 extends BasePullListView {
     protected void loadMore() {
         if (mLoadMoreListener != null) {
             if (mState == LOADING) {
-                if (mRefreshing) {
-                    mLoadMoreListener.onError(OnRefreshListener.ERROR_CODE_REFRESHING);
-                } else {
-                    mLoadMoreListener.onError(OnRefreshListener.ERROR_CODE_LOADINGMORE);
-                }
                 return;
             }
             mLoadMoreListener.onLoadMore();
@@ -337,11 +332,6 @@ public class PullListView2 extends BasePullListView {
     protected void refresh() {
         if (mRefreshListener != null) {
             if (mState == LOADING) {
-                if (mRefreshing) {
-                    mRefreshListener.onError(OnRefreshListener.ERROR_CODE_REFRESHING);
-                } else {
-                    mRefreshListener.onError(OnRefreshListener.ERROR_CODE_LOADINGMORE);
-                }
                 return;
             }
             mRefreshListener.onRefresh();

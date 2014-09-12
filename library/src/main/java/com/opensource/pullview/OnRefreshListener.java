@@ -32,9 +32,4 @@ public interface OnRefreshListener {
 	 */
 	public void onRefresh();
 
-    /**
-     * On Error
-     */
-    public void onError(int errorCode);
-	
 }

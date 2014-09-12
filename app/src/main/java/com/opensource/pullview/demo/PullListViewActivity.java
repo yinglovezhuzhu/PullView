@@ -120,11 +120,6 @@ public class PullListViewActivity extends Activity {
 				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 3000);
 				Log.e(TAG, "Start refresh+=====================^_^");
 			}
-
-            @Override
-            public void onError(int errorCode) {
-
-            }
         });
 		
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -134,11 +129,6 @@ public class PullListViewActivity extends Activity {
 				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
 				Log.e(TAG, "Start load more+=====================^_^");
 			}
-
-            @Override
-            public void onError(int errorCode) {
-                Log.e(TAG, "Load more error==============>>> errorCode=" + errorCode);
-            }
         });
 		
 //		mListView.onFirstLoadingData("正在加载");
