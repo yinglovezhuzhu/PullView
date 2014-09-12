@@ -18,6 +18,7 @@
 package com.opensource.pullview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,6 +157,52 @@ public class PullHeaderView2 extends LinearLayout {
      */
     public ImageView getBackgroudImageView() {
         return mIvBg;
+    }
+
+    /**
+     * Sets background image to ImageView
+     * @param resId
+     */
+    public void setBackgroudImage(int resId) {
+        mIvBg.setImageResource(resId);
+    }
+
+    /**
+     * Sets background image to ImageView
+     * @param bm
+     */
+    public void setBackgroundImage(Bitmap bm) {
+        mIvBg.setImageBitmap(bm);
+    }
+
+    /**
+     * Sets background view<br/><br/>
+     *
+     * If you use this method to set background view, it will replace default background ImageView.
+     * @param backgroundView
+     */
+    public void setBackgroundView(View backgroundView) {
+        if(null == backgroundView) {
+            return;
+        }
+        mBackgroundContent.removeAllViews();
+        mBackgroundContent.addView(backgroundView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    /**
+     * Sets background view<br/><br/>
+     *
+     * If you use this method to set background view, it will replace default background ImageView.
+     *
+     * @param layoutId
+     */
+    public void setBackgroudView(int layoutId) {
+        if(0 == layoutId) {
+            return;
+        }
+        mBackgroundContent.removeAllViews();
+        View.inflate(getContext(), layoutId, mBackgroundContent);
     }
 
 }

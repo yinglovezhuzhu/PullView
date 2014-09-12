@@ -18,9 +18,11 @@
 package com.opensource.pullview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 /**
  * Usage A Custom ListView can be pull to refresh and load more<br>
@@ -356,6 +358,55 @@ public class PullListView2 extends BasePullListView {
     public void loadMoreCompleted(boolean loadMoreable) {
         super.loadMoreCompleted(loadMoreable);
         mHeaderView.setStateContentVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Sets header background image to ImageView
+     *
+     * @param resid
+     */
+    public void setHeaderBackgroundImage(int resid) {
+        mHeaderView.setBackgroundResource(resid);
+    }
+
+    /**
+     * Sets header background image to ImageView
+     *
+     * @param bm
+     */
+    public void setHeaderBackgroundImage(Bitmap bm) {
+        mHeaderView.setBackgroundImage(bm);
+    }
+
+    /**
+     * Gets header background ImageView
+     *
+     * @return
+     */
+    public ImageView getHeaderBackgroundImageView() {
+        return mHeaderView.getBackgroudImageView();
+    }
+
+    /**
+     * Sets background view<br/><br/>
+     * <p/>
+     * If you use this method to set background view, it will replace default background ImageView.
+     *
+     * @param backgroundView
+     */
+    public void setBackgroundView(View backgroundView) {
+        mHeaderView.setBackgroundView(backgroundView);
+    }
+
+    /**
+     * Sets background view<br/><br/>
+     * <p/>
+     * If you use this method to set background view, it will replace default background ImageView.
+     *
+     * @param layoutId
+     */
+    public void setBackgroundView(int layoutId) {
+        mHeaderView.setBackgroudView(layoutId);
     }
 
     /**

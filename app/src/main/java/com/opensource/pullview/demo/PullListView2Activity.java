@@ -105,8 +105,8 @@ public class PullListView2Activity extends Activity {
 		setContentView(R.layout.activity_pull_listview2);
 		
 		mListView = (PullListView2) findViewById(R.id.pull_list_view2);
-//		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
-		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
+		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
+//		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
 //		mListView.setHeaderLabelVisibility(View.VISIBLE);
 //		mListView.setLastRefreshTime(DateUtil.getYesterdayDate(getString(R.string.pull_view_date_format)));
 		
