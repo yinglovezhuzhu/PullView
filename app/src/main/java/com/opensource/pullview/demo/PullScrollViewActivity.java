@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.opensource.pullview.OnRefreshListener;
 import com.opensource.pullview.PullScrollView;
 
 /**
@@ -62,14 +63,14 @@ public class PullScrollViewActivity extends Activity {
 		setContentView(R.layout.activity_pull_scroll_view);
 		
 		mPullScrollView = (PullScrollView) findViewById(R.id.pull_scroll_view);
-//		mPullScrollView.setOnRefreshListener(new OnRefreshListener() {
-//
-//			@Override
-//			public void onRefresh() {
-//				mHandler.sendEmptyMessageDelayed(MSG_REFRESH_DONE, 20000);
-//			}
-//
-//        });
+		mPullScrollView.setOnRefreshListener(new OnRefreshListener() {
+
+			@Override
+			public void onRefresh() {
+				mHandler.sendEmptyMessageDelayed(MSG_REFRESH_DONE, 20000);
+			}
+
+        });
 	}
 
 }
