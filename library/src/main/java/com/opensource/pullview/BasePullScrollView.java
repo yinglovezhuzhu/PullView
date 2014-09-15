@@ -27,9 +27,6 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     /** The content layout */
     protected LinearLayout mContentLayout;
 
-    /** The header view. */
-    protected PullHeaderView mHeaderView;
-
     /** The header view height. */
     protected int mHeaderViewHeight;
 
@@ -203,6 +200,19 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      */
     public boolean isRefreshing() {
         return mRefreshing;
+    }
+
+    /**
+     * Add header view to scroll view.
+     * @param headerView
+     */
+    protected void addHeaderView(View headerView) {
+        if(null == mContentLayout || null == headerView) {
+            return;
+        }
+        LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        mScrollLayout.addView(headerView, 0, headerLp);
     }
 
     /**

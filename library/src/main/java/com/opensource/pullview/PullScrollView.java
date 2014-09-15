@@ -22,7 +22,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.opensource.pullview.utils.DateUtil;
 
@@ -35,6 +34,8 @@ import com.opensource.pullview.utils.DateUtil;
  * @author yinglovezhuzhu@gmail.com
  */
 public class PullScrollView extends BasePullScrollView {
+
+    private PullHeaderView mHeaderView;
 
     private int mStartY = 0;
     private boolean mRecording = false;
@@ -259,18 +260,13 @@ public class PullScrollView extends BasePullScrollView {
 	 */
 	private void initView(Context context) {
 
-		//Add content layout
-		LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-
 		// init header view
 		mHeaderView = new PullHeaderView(context);
 
 		// init header height
 		mHeaderViewHeight = mHeaderView.getViewHeight();
 		mHeaderView.setGravity(Gravity.BOTTOM);
-//		mScrollLayout.addView(mHeaderView, headerLp);
-        mScrollLayout.addView(mHeaderView, 0, headerLp);
+        addHeaderView(mHeaderView);
 
         mState = IDEL;
         updateHeaderViewByState(-mHeaderViewHeight);
