@@ -140,8 +140,8 @@ public class PullListView extends BasePullListView {
                     int moveY = mStartY - tempY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mLoadMoreable || mOverScrollable)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mLoadMoreable && mOverScrollable)) {
+                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnablePullLoad || mOverScrollable)
+                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnablePullLoad && mOverScrollable)) {
                         //可以向上pull的条件是
                         //1.mState != LOADING，即非LOADING状态下
                         //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
@@ -195,7 +195,7 @@ public class PullListView extends BasePullListView {
                             updateHeaderViewByState(-mHeaderViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
-                            if (mRefreshable) {
+                            if (mEnablePullRefresh) {
                                 //Release to refresh.
                                 refresh();
                                 mState = LOADING;
@@ -220,7 +220,7 @@ public class PullListView extends BasePullListView {
                             updateFooterViewByState(-mFooterViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
-                            if (mLoadMoreable) {
+                            if (mEnablePullLoad) {
                                 //Release to load more data.
                                 loadMore();
                                 mState = LOADING;
@@ -285,7 +285,7 @@ public class PullListView extends BasePullListView {
             default:
                 break;
         }
-        mHeaderView.setVisibility(mRefreshable ? View.VISIBLE : View.INVISIBLE);
+        mHeaderView.setVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
         mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
         mHeaderView.setPadding(0, paddingTop, 0, 0);
     }
@@ -323,28 +323,26 @@ public class PullListView extends BasePullListView {
             default:
                 break;
         }
-        mFooterView.setVisibility(mLoadMoreable ? View.VISIBLE : View.INVISIBLE);
+        mFooterView.setVisibility(mEnablePullLoad ? View.VISIBLE : View.INVISIBLE);
         mFooterView.setPadding(0, 0, 0, paddingBottom);
     }
 
     @Override
     protected void loadMore() {
-        if (mLoadMoreListener != null) {
-            if (mState == LOADING) {
-                return;
-            }
-            mLoadMoreListener.onLoadMore();
+        if(null == mLoadMoreListener || mState == LOADING) {
+            return;
         }
+        mRefreshing = false;
+        mLoadMoreListener.onLoadMore();
     }
 
     @Override
     protected void refresh() {
-        if (mRefreshListener != null) {
-            if (mState == LOADING) {
-                return;
-            }
-            mRefreshListener.onRefresh();
+        if(null == mRefreshListener || mState == LOADING) {
+            return;
         }
+        mRefreshing = true;
+        mRefreshListener.onRefresh();
     }
 
     @Override
@@ -376,6 +374,7 @@ public class PullListView extends BasePullListView {
         mHeaderView.setLabelVisibility(View.GONE);
         mHeaderView.startArrowAnimation(null);
         mHeaderView.setTitleText(text);
+        mHeaderView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -393,6 +392,7 @@ public class PullListView extends BasePullListView {
         mHeaderView.setLabelVisibility(View.GONE);
         mHeaderView.startArrowAnimation(null);
         mHeaderView.setTitleText(resId);
+        mHeaderView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -409,6 +409,7 @@ public class PullListView extends BasePullListView {
         mFooterView.setTitileVisibility(View.VISIBLE);
         mFooterView.startArrowAnimation(null);
         mFooterView.setTitleText(text);
+        mFooterView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -425,6 +426,7 @@ public class PullListView extends BasePullListView {
         mFooterView.setTitileVisibility(View.VISIBLE);
         mFooterView.startArrowAnimation(null);
         mFooterView.setTitleText(resId);
+        mFooterView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -450,6 +452,7 @@ public class PullListView extends BasePullListView {
         this.mHeaderLebelVisiblity = visibility;
         if (mHeaderLebelVisiblity == View.INVISIBLE) {
             mHeaderLebelVisiblity = View.GONE;
+            return;
         }
         mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
     }

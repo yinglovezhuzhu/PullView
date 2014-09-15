@@ -25,9 +25,9 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     protected int mTotalItemCount;
 
     /** Whether it can refresh. */
-    protected boolean mRefreshable = false;
+    protected boolean mEnablePullRefresh = false;
     /** Whether it can load more data. */
-    protected boolean mLoadMoreable = false;
+    protected boolean mEnablePullLoad = false;
     /** Is refreshing data */
     protected boolean mRefreshing = false;
     /** Can be over scroll **/
@@ -87,7 +87,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (scrollState == SCROLL_STATE_IDLE && mLastItemIndex == mTotalItemCount && mState == IDEL) {
-            if (mLoadMoreable && mLoadMode == LoadMode.AUTO_LOAD) {
+            if (mEnablePullLoad && mLoadMode == LoadMode.AUTO_LOAD) {
                 setSelection(mTotalItemCount);
                 loadMore();
                 mState = LOADING;
@@ -131,7 +131,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void refreshCompleted() {
         mState = IDEL;
-        mRefreshing = false;
+//        mRefreshing = false;
         mRecording = false;
     }
 
@@ -140,7 +140,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void loadMoreCompleted(boolean loadMoreable) {
         mState = IDEL;
-        this.mLoadMoreable = loadMoreable;
+        this.mEnablePullLoad = loadMoreable;
     }
 
     /**
@@ -150,7 +150,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void setOnRefreshListener(OnRefreshListener listener) {
         this.mRefreshListener = listener;
-        mRefreshable = null != listener;
+        mEnablePullRefresh = null != listener;
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void setOnLoadMoreListener(OnLoadMoreListener listener) {
         this.mLoadMoreListener = listener;
-        mLoadMoreable = null != listener;
+        mEnablePullLoad = null != listener;
     }
 
     /**
@@ -184,8 +184,16 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         this.mOverScrollable = overScrollable;
     }
 
+    /**
+     * It's refreshing
+     * @return
+     */
+    public boolean isRefreshing() {
+        return mRefreshing;
+    }
+
     private void init() {
-                mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
         mDownToUpAnimation.setDuration(ROTATE_ANIMATION_DURATION);
         mDownToUpAnimation.setFillAfter(true);

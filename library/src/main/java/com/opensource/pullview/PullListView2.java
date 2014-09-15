@@ -152,8 +152,8 @@ public class PullListView2 extends BasePullListView {
                     int moveY = mStartY - tempY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mLoadMoreable || mOverScrollable)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mLoadMoreable && mOverScrollable)) {
+                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnablePullLoad || mOverScrollable)
+                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnablePullLoad && mOverScrollable)) {
                         //可以向上pull的条件是
                         //1.mState != LOADING，即非LOADING状态下
                         //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
@@ -206,7 +206,7 @@ public class PullListView2 extends BasePullListView {
                             mState = IDEL;
                             break;
                         case RELEASE_TO_LOAD:
-                            if (mRefreshable) {
+                            if (mEnablePullRefresh) {
                                 //Release to refresh.
                                 refresh();
                                 mState = LOADING;
@@ -231,7 +231,7 @@ public class PullListView2 extends BasePullListView {
                             updateFooterViewByState(-mFooterViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
-                            if (mLoadMoreable) {
+                            if (mEnablePullLoad) {
                                 //Release to load more data.
                                 loadMore();
                                 mState = LOADING;
@@ -272,7 +272,7 @@ public class PullListView2 extends BasePullListView {
             default:
                 break;
         }
-        mHeaderView.setStateContentVisibility(mRefreshable ? View.VISIBLE : View.INVISIBLE);
+        mHeaderView.setStateContentVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
         mHeaderView.setPadding(0, paddingTop, 0, 0);
     }
 
@@ -312,32 +312,28 @@ public class PullListView2 extends BasePullListView {
             default:
                 break;
         }
-        mFooterView.setVisibility(mLoadMoreable ? View.VISIBLE : View.INVISIBLE);
+        mFooterView.setVisibility(mEnablePullLoad ? View.VISIBLE : View.INVISIBLE);
         mFooterView.setPadding(0, 0, 0, paddingBottom);
     }
 
     @Override
     protected void loadMore() {
-        if (mLoadMoreListener != null) {
-            if (mState == LOADING) {
-                return;
-            }
-            mLoadMoreListener.onLoadMore();
-            mRefreshing = false;
-            mHeaderView.setStateContentVisibility(View.INVISIBLE);
+        if(null == mLoadMoreListener || mState == LOADING) {
+            return;
         }
+        mRefreshing = false;
+        mLoadMoreListener.onLoadMore();
+        mHeaderView.setStateContentVisibility(View.INVISIBLE);
     }
 
     @Override
     protected void refresh() {
-        if (mRefreshListener != null) {
-            if (mState == LOADING) {
-                return;
-            }
-            mRefreshListener.onRefresh();
-            mRefreshing = true;
-            mHeaderView.setStateContentVisibility(View.VISIBLE);
+        if(null == mRefreshListener || mState == LOADING) {
+            return;
         }
+        mRefreshing = true;
+        mRefreshListener.onRefresh();
+        mHeaderView.setStateContentVisibility(View.VISIBLE);
     }
 
     @Override
@@ -452,7 +448,7 @@ public class PullListView2 extends BasePullListView {
         mHeaderViewStateHeight = mHeaderView.getStateViewHeight();
         mMinPullDownDist = mHeaderViewStateHeight > DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE
                 ? mHeaderViewStateHeight : DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE; //下拉刷新需要滑动的距离
-        mHeaderView.setStateContentVisibility(mRefreshable ? View.VISIBLE : View.INVISIBLE);
+        mHeaderView.setStateContentVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
         addHeaderView(mHeaderView, null, false);
 
         mFooterView = new PullFooterView(context);

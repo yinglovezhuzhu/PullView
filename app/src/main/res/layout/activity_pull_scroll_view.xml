@@ -3,78 +3,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <com.opensource.pullview.PullScrollView 
+    <com.opensource.pullview.PullScrollView
         android:id="@+id/pull_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_launcher" 
+            android:src="@drawable/ic_launcher"
+            android:padding="20dip"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_launcher"
+            android:padding="20dip"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_launcher"
+            android:padding="20dip"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
         <ImageView 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="20dip"
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/app_name"/>
     </com.opensource.pullview.PullScrollView>

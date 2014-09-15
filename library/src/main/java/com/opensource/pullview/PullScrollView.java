@@ -22,13 +22,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.Scroller;
 
 import com.opensource.pullview.utils.DateUtil;
 
@@ -40,51 +34,15 @@ import com.opensource.pullview.utils.DateUtil;
  * 
  * @author yinglovezhuzhu@gmail.com
  */
-public class PullScrollView extends ScrollView implements IPullView {
+public class PullScrollView extends BasePullScrollView {
 
-	/** The Constant SCROLLBACK_HEADER. */
-	private final static int SCROLLBACK_HEADER = 0;
+    private int mStartY = 0;
+    private boolean mRecording = false;
+    private boolean mIsBack = false;
 
-	/** The Constant SCROLL_DURATION. */
-	private final static int SCROLL_DURATION = 400;
-
-	/** The m last y. */
-	private float mLastY = -1;
-
-	/** The m scroller. */
-	private Scroller mScroller;
-
-	/** The m scroll layout. */
-	private LinearLayout mScrollLayout;
-
-	/** The m header view. */
-	private PullHeaderView mHeaderView;
-
-	/** The m header view height. */
-	private int mHeaderViewHeight;
-
-	/** The m enable pull refresh. */
-	private boolean mEnablePullRefresh = false;
-
-	/** The m pull refreshing. */
-	private boolean mPullRefreshing = false;
-
-	/** The m ab on refresh listener. */
-	private OnRefreshListener mOnRefreshListener = null;
-
-	/** The m scroll back. */
-	private int mScrollBack;
-	
-	/** The m state. */
-	private int mState = IDEL;
-	
 	private String mLastRefreshTime = "";
-	
-	/** The m rotate up anim. */
-	private Animation mRotateUpAnim;
-	
-	/** The m rotate down anim. */
-	private Animation mRotateDownAnim;
+
+    private int mHeaderLebelVisiblity = View.VISIBLE;
 
 	/**
 	 * Constructor
@@ -108,117 +66,164 @@ public class PullScrollView extends ScrollView implements IPullView {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
-		if(mEnablePullRefresh) {
-			if (mLastY == -1) {
-				mLastY = ev.getRawY();
-			}
-			
-			switch (ev.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				mLastY = ev.getRawY();
-				break;
-			case MotionEvent.ACTION_MOVE:
-				final float deltaY = ev.getRawY() - mLastY;
-				mLastY = ev.getRawY();
-				if ((mHeaderView.getVisiableHeight() > 0 || deltaY > 0)) {
-					updateHeaderView(deltaY / OFFSET_RATIO);
-				}
-				break;
-			case MotionEvent.ACTION_UP:
-				mLastY = -1;
-				updateHeaderHeight();
-				if(mHeaderView.getVisiableHeight() >= mHeaderViewHeight) {
-					startRefresh();
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		return super.onTouchEvent(ev);
+	public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartY = (int) event.getY();
+                if(!mRecording) {
+                    mRecording = mTopScroll == 0;
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int tempY = (int) event.getY();
+                if (!mRecording) {
+                    mRecording = mTopScroll == 0;
+                    mStartY = mRecording ? tempY : mStartY;
+                }
+                if(mRecording) {
+                    int moveY = tempY - mStartY;
+                    int scrollY = moveY / OFFSET_RATIO;
+                    if (mState != LOADING) {
+                        // Ensure that the process of setting padding, current position has always been at the header,
+                        // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
+                        switch (mState) {
+                            case RELEASE_TO_LOAD: // Release to load data
+                                // Slide up, header part was covered, but not all be covered(Pull up to cancel)
+                                    if(scrollY > 0) {
+                                        scrollTo(0, 0);
+                                    }
+                                if (moveY > 0 && (scrollY < mHeaderViewHeight)) {
+                                    mState = PULL_TO_LOAD;
+                                } else if (moveY <= 0) {
+                                    // Slide to the top
+                                    mState = IDEL;
+                                }
+                                updateHeaderViewByState(scrollY - mHeaderViewHeight);
+                                break;
+                            case PULL_TO_LOAD:
+                                // Pull down to the state can enter RELEASE_TO_REFRESH
+                                if(scrollY > 0) {
+                                    scrollTo(0, 0);
+                                }
+                                if (moveY <= 0) {
+                                    mState = IDEL;
+                                } else if (scrollY >= mHeaderViewHeight) {
+                                    mState = RELEASE_TO_LOAD;
+                                    mIsBack = true;
+                                }
+                                updateHeaderViewByState(scrollY - mHeaderViewHeight);
+                                break;
+                            case IDEL:
+                                if (moveY > 0) {
+                                    mState = PULL_TO_LOAD;
+                                }
+                                updateHeaderViewByState(-mHeaderViewHeight);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                    switch (mState) {
+                        case IDEL:
+                            //Do nothing.
+                            break;
+                        case PULL_TO_LOAD:
+                            //Pull to refresh.
+                            mState = IDEL;
+                            updateHeaderViewByState(-mHeaderViewHeight);
+                            break;
+                        case RELEASE_TO_LOAD:
+                            if (mEnablePullRefresh) {
+                                //Release to refresh.
+                                refresh();
+                                mState = LOADING;
+                                updateHeaderViewByState(0);
+                            } else {
+                                mState = IDEL;
+                                updateHeaderViewByState(-mHeaderViewHeight);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                mRecording = false;
+                mIsBack = false;
+                break;
+            default:
+                break;
+        }
+		return super.onTouchEvent(event);
 	}
 
-	@Override
-	public void computeScroll() {
-		if (mScroller.computeScrollOffset()) {
-			if (mScrollBack == SCROLLBACK_HEADER) {
-				mHeaderView.setVisiableHeight(mScroller.getCurrY());
-                System.out.println(mScroller.getCurrY());
-            }
-			postInvalidate();
-		}
-		super.computeScroll();
-	}
+    @Override
+    protected void updateHeaderViewByState(int paddingTop) {
+        switch (mState) {
+            case RELEASE_TO_LOAD:
+                mHeaderView.setArrowVisibility(View.VISIBLE);
+                mHeaderView.setProgressVisibility(View.GONE);
+                mHeaderView.startArrowAnimation(mDownToUpAnimation);
+                mHeaderView.setTitleText(R.string.pull_view_release_to_refresh);
+                mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
+                        + mLastRefreshTime);
+                break;
+            case PULL_TO_LOAD:
+                mHeaderView.setArrowVisibility(View.VISIBLE);
+                mHeaderView.setProgressVisibility(View.GONE);
 
-	@Override
-	public void addView(View child) {
-		if(getChildCount() > 0) {
-			mScrollLayout.addView(child);
-		} else {
-			super.addView(child);
-		}
-	}
-	
-	@Override
-	public void addView(View child, int index) {
-		if(getChildCount() > 0) {
-			mScrollLayout.addView(child, index);
-		} else {
-			super.addView(child, index);
-		}
-	}
-	
-	@Override
-	public void addView(View child, int width, int height) {
-		if(getChildCount() > 0) {
-			mScrollLayout.addView(child, width, height);
-		} else {
-			super.addView(child, width, height);
-		}
-	}
-	
-	@Override
-	public void addView(View child, android.view.ViewGroup.LayoutParams params) {
-		if(getChildCount() > 0) {
-			mScrollLayout.addView(child, params);
-		} else {
-			super.addView(child, params);
-		}
-	}
-	
-	@Override
-	public void addView(View child, int index,
-			android.view.ViewGroup.LayoutParams params) {
-		if(getChildCount() > 0) {
-			mScrollLayout.addView(child, index, params);
-		} else {
-			super.addView(child, index, params);
-		}
-	}
+                if (mIsBack) {
+                    mIsBack = false;
+                    mHeaderView.startArrowAnimation(mUpToDownAnimation);
+                }
+                mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
+                mHeaderView.setLabelText(getResources().getString(
+                        R.string.pull_view_refresh_time)
+                        + mLastRefreshTime);
+                break;
+            case LOADING:
+                mHeaderView.setArrowVisibility(View.GONE);
+                mHeaderView.setProgressVisibility(View.VISIBLE);
+                mHeaderView.startArrowAnimation(null);
+                mHeaderView.setTitleText(R.string.pull_view_refreshing);
+                mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
+                        + mLastRefreshTime);
+                break;
+            case IDEL:
+                mHeaderView.setProgressVisibility(View.GONE);
+                mHeaderView.startArrowAnimation(null);
+                mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
+                mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
+                        + mLastRefreshTime);
+                break;
+            default:
+                break;
+        }
+        mHeaderView.setVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
+        mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
+        mHeaderView.setPadding(0, paddingTop, 0, 0);
+    }
 
-	/**
-	 * Set Refresh Listener.
-	 * 
-	 * @param listener
-	 */
-	public void setOnRefreshListener(OnRefreshListener listener) {
-		mOnRefreshListener = listener;
-		setPullRefreshEnable(null != listener);
-	}
 
-	/**
-	 * Refresh complete
-	 */
+    @Override
+    protected void refresh() {
+        if(null == mOnRefreshListener || mState == LOADING) {
+            return;
+        }
+        mRefreshing = true;
+        mOnRefreshListener.onRefresh();
+    }
+
+
+    @Override
 	public void refreshComplete() {
-//		if (mPullRefreshing == true) {
-			mPullRefreshing = false;
-			updateHeaderHeight();
-			mLastRefreshTime = DateUtil.getSystemDate("yyyy-MM-dd HH:mm:ss");
-			mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
-//		}
+        super.refreshComplete();
+        updateHeaderViewByState(-mHeaderViewHeight);
+        mLastRefreshTime = DateUtil.getSystemDate("yyyy-MM-dd HH:mm:ss");
+        mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
 	}
-	
+
 	/**
 	 * Set header view label's visibility.<br>
 	 * <p>You can set the value of {@link android.view.View#GONE}、{@link android.view.View#VISIBLE}<br>
@@ -228,8 +233,10 @@ public class PullScrollView extends ScrollView implements IPullView {
 	 * @see android.view.View#VISIBLE
 	 */
 	public void setHeaderLabelVisibility(int visibility) {
+        mHeaderLebelVisiblity = visibility;
 		if(visibility == View.INVISIBLE) {
-			mHeaderView.setLabelVisibility(View.GONE); 
+			mHeaderView.setLabelVisibility(View.GONE);
+            return;
 		}
 		mHeaderView.setLabelVisibility(visibility);
 	}
@@ -240,28 +247,10 @@ public class PullScrollView extends ScrollView implements IPullView {
 	 */
 	public void setLastRefreshTime(String time) {
 		this.mLastRefreshTime = time;
+        mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
 	}
 	
-	/**
-	 * Get header view
-	 * 
-	 * @return
-	 * @throws
-	 */
-	public PullHeaderView getHeaderView() {
-		return mHeaderView;
-	}
 
-	/**
-	 * 
-	 * Get Progress
-	 * 
-	 * @return
-	 * @throws
-	 */
-	public ProgressBar getHeaderProgress() {
-		return mHeaderView.getProgress();
-	}
 
 	/**
 	 * Init the View.
@@ -269,147 +258,25 @@ public class PullScrollView extends ScrollView implements IPullView {
 	 * @param context the context
 	 */
 	private void initView(Context context) {
-		mScroller = new Scroller(context, new DecelerateInterpolator());
 
 		//Add content layout
 		LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		mScrollLayout = new LinearLayout(context);
-		mScrollLayout.setLayoutParams(headerLp);
-		mScrollLayout.setOrientation(LinearLayout.VERTICAL);
 
 		// init header view
 		mHeaderView = new PullHeaderView(context);
-		mHeaderView.setVisiableHeight(0);
 
 		// init header height
 		mHeaderViewHeight = mHeaderView.getViewHeight();
 		mHeaderView.setGravity(Gravity.BOTTOM);
-		mScrollLayout.addView(mHeaderView, headerLp);
-		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT, Gravity.TOP);
-		this.addView(mScrollLayout, lp);
-		
-		mRotateUpAnim = new RotateAnimation(0.0f, -180.0f,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
-		mRotateUpAnim.setDuration(ROTATE_ANIMATION_DURATION);
-		mRotateUpAnim.setFillAfter(true);
-		mRotateDownAnim = new RotateAnimation(-180.0f, 0.0f,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
-		mRotateDownAnim.setDuration(ROTATE_ANIMATION_DURATION);
-		mRotateDownAnim.setFillAfter(true);
+//		mScrollLayout.addView(mHeaderView, headerLp);
+        mScrollLayout.addView(mHeaderView, 0, headerLp);
+
+        mState = IDEL;
+        updateHeaderViewByState(-mHeaderViewHeight);
 		
 		mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
+
 	}
 
-	/**
-	 * Refresh Header height.
-	 */
-	private void updateHeaderHeight() {
-		int height = mHeaderView.getVisiableHeight();
-		if (height < mHeaderViewHeight || !mPullRefreshing) {
-			mScrollBack = SCROLLBACK_HEADER;
-			mScroller.startScroll(0, height, 0, -1 * height, SCROLL_DURATION);
-		} else if (height > mHeaderViewHeight || !mPullRefreshing) {
-			mScrollBack = SCROLLBACK_HEADER;
-			mScroller.startScroll(0, height, 0, -(height - mHeaderViewHeight),
-					SCROLL_DURATION);
-		}
-
-		invalidate();
-	}
-
-	/**
-	 * Update the visiable height of header view.
-	 * 
-	 * @param delta
-	 */
-	private void updateHeaderView(float delta) {
-		int newHeight = (int) delta + mHeaderView.getVisiableHeight();
-		mHeaderView.setVisiableHeight(newHeight);
-		if (mEnablePullRefresh && !mPullRefreshing) {
-			if (mHeaderView.getVisiableHeight() >= mHeaderViewHeight) {
-				updateHeaderByState(RELEASE_TO_LOAD);
-			} else {
-				updateHeaderByState(PULL_TO_LOAD);
-			}
-		}
-	}
-
-	/**
-	 * Enable or disable the ability of pull to refresh.
-	 * 
-	 * @param enable
-	 */
-	private void setPullRefreshEnable(boolean enable) {
-		mEnablePullRefresh = enable;
-		if (!mEnablePullRefresh) { // disable, hide the content
-			mHeaderView.setVisibility(View.INVISIBLE);
-		} else {
-			mHeaderView.setVisibility(View.VISIBLE);
-		}
-	}
-	
-	/**
-	 * Start refresh
-	 */
-	private void startRefresh() {
-		if(mPullRefreshing) {
-			//In the process of preventing refresh again when it was refreshing. 
-			return;
-		}
-		updateHeaderByState(LOADING);
-		if (mOnRefreshListener != null) {
-			mOnRefreshListener.onRefresh();
-		}
-		mPullRefreshing = true;
-	}
-	
-	/**
-	 *  Update header view by state.
-	 *
-	 * @param state the new state
-	 */
-	public void updateHeaderByState(int state) {
-		if (state == mState) {
-			return ;
-		}
-		
-		if (state == LOADING) {	
-			mHeaderView.startArrowAnimation(null);
-			mHeaderView.setArrowVisibility(View.GONE);
-			mHeaderView.setProgressVisibility(View.VISIBLE);
-			
-		} else {	
-			mHeaderView.setArrowVisibility(View.VISIBLE);
-			mHeaderView.setProgressVisibility(View.GONE);
-		}
-		
-		switch(state){
-			case PULL_TO_LOAD:
-				if (mState == RELEASE_TO_LOAD) {
-					mHeaderView.startArrowAnimation(mRotateDownAnim);
-				}
-				if (mState == LOADING) {
-					mHeaderView.startArrowAnimation(null);
-				}
-				mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
-				mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
-				break;
-			case RELEASE_TO_LOAD:
-				if (mState != RELEASE_TO_LOAD) {
-					mHeaderView.startArrowAnimation(mRotateUpAnim);
-					mHeaderView.setTitleText(R.string.pull_view_release_to_refresh);
-				}
-				break;
-			case LOADING:
-				mHeaderView.setTitleText(R.string.pull_view_refreshing);
-				break;
-				default:
-			}
-		
-		mState = state;
-	}
 }
