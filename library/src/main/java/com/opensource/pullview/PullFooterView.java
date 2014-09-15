@@ -144,10 +144,6 @@ public class PullFooterView extends LinearLayout {
             mArrowImageView.clearAnimation();
             mArrowImageView.startAnimation(animation);
         }
-//		mArrowImageView.clearAnimation();
-//		if(null != animation) {
-//			mArrowImageView.startAnimation(animation);
-//		}
 	}
 	
 	/**
