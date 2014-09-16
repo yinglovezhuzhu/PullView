@@ -27,51 +27,51 @@ import com.opensource.pullview.utils.DateUtil;
 
 /**
  * Usage A custom scroll view can be pull to refresh.<br>
- * 
+ * <p/>
  * <p> You can add child view use addView method.<br>
  * also you can add child view in layout xml file like this.<br>
- * 
+ *
  * @author yinglovezhuzhu@gmail.com
  */
 public class PullScrollView extends BasePullScrollView {
 
     private PullHeaderView mHeaderView;
 
-	private String mLastRefreshTime = "";
+    private String mLastRefreshTime = "";
 
     private int mHeaderLebelVisiblity = View.VISIBLE;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param context the context
-	 */
-	public PullScrollView(Context context) {
-		super(context);
-		initView(context);
-	}
+    /**
+     * Constructor
+     *
+     * @param context the context
+     */
+    public PullScrollView(Context context) {
+        super(context);
+        initView(context);
+    }
 
-	/**
-	 * Constructor
-	 * 
-	 * @param context the context
-	 * @param attrs the attrs
-	 */
-	public PullScrollView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView(context);
-	}
+    /**
+     * Constructor
+     *
+     * @param context the context
+     * @param attrs   the attrs
+     */
+    public PullScrollView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView(context);
+    }
 
     private int mStartY = 0;
     private boolean mRecording = false;
     private boolean mIsBack = false;
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mStartY = (int) event.getY();
-                if(!mRecording) {
+                if (!mRecording) {
                     mRecording = mTopPosition == 0;
                 }
                 break;
@@ -81,7 +81,7 @@ public class PullScrollView extends BasePullScrollView {
                     mRecording = mTopPosition == 0;
                     mStartY = mRecording ? tempY : mStartY;
                 }
-                if(mRecording && (mEnableOverScroll || mEnablePullRefresh)) {
+                if (mRecording && (mEnableOverScroll || mEnablePullRefresh)) {
                     int moveY = tempY - mStartY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING) {
@@ -90,7 +90,7 @@ public class PullScrollView extends BasePullScrollView {
                         switch (mState) {
                             case RELEASE_TO_LOAD: // Release to load data
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
-                                if(scrollY > 0) {
+                                if (scrollY > 0) {
                                     scrollTo(0, 0);
                                 }
                                 if (moveY > 0 && (scrollY < mHeaderViewHeight)) {
@@ -103,7 +103,7 @@ public class PullScrollView extends BasePullScrollView {
                                 break;
                             case PULL_TO_LOAD:
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
-                                if(scrollY > 0) {
+                                if (scrollY > 0) {
                                     scrollTo(0, 0);
                                 }
                                 if (moveY <= 0) {
@@ -127,7 +127,7 @@ public class PullScrollView extends BasePullScrollView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mRecording) {
+                if (mRecording) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -158,8 +158,8 @@ public class PullScrollView extends BasePullScrollView {
             default:
                 break;
         }
-		return super.onTouchEvent(event);
-	}
+        return super.onTouchEvent(event);
+    }
 
     @Override
     protected void updateHeaderViewByState(int paddingTop) {
@@ -211,7 +211,7 @@ public class PullScrollView extends BasePullScrollView {
 
     @Override
     protected void refresh() {
-        if(null == mOnRefreshListener || mState == LOADING) {
+        if (null == mOnRefreshListener || mState == LOADING) {
             return;
         }
         mRefreshing = true;
@@ -220,61 +220,61 @@ public class PullScrollView extends BasePullScrollView {
 
 
     @Override
-	public void refreshCompleted() {
+    public void refreshCompleted() {
         super.refreshCompleted();
         updateHeaderViewByState(-mHeaderViewHeight);
         mLastRefreshTime = DateUtil.getSystemDate("yyyy-MM-dd HH:mm:ss");
         mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
-	}
+    }
 
-	/**
-	 * Set header view label's visibility.<br>
-	 * <p>You can set the value of {@link android.view.View#GONE}、{@link android.view.View#VISIBLE}<br>
-	 * @param visibility
-	 * 
-	 * @see android.view.View#GONE
-	 * @see android.view.View#VISIBLE
-	 */
-	public void setHeaderLabelVisibility(int visibility) {
+    /**
+     * Set header view label's visibility.<br>
+     * <p>You can set the value of {@link android.view.View#GONE}、{@link android.view.View#VISIBLE}<br>
+     *
+     * @param visibility
+     * @see android.view.View#GONE
+     * @see android.view.View#VISIBLE
+     */
+    public void setHeaderLabelVisibility(int visibility) {
         mHeaderLebelVisiblity = visibility;
-		if(visibility == View.INVISIBLE) {
-			mHeaderView.setLabelVisibility(View.GONE);
+        if (visibility == View.INVISIBLE) {
+            mHeaderView.setLabelVisibility(View.GONE);
             return;
-		}
-		mHeaderView.setLabelVisibility(visibility);
-	}
-	
-	/**
-	 * Set last refresh time.
-	 * @param time
-	 */
-	public void setLastRefreshTime(String time) {
-		this.mLastRefreshTime = time;
+        }
+        mHeaderView.setLabelVisibility(visibility);
+    }
+
+    /**
+     * Set last refresh time.
+     *
+     * @param time
+     */
+    public void setLastRefreshTime(String time) {
+        this.mLastRefreshTime = time;
         mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
-	}
-	
+    }
 
 
-	/**
-	 * Init the View.
-	 * 
-	 * @param context the context
-	 */
-	private void initView(Context context) {
+    /**
+     * Init the View.
+     *
+     * @param context the context
+     */
+    private void initView(Context context) {
 
-		// init header view
-		mHeaderView = new PullHeaderView(context);
+        // init header view
+        mHeaderView = new PullHeaderView(context);
 
-		// init header height
-		mHeaderViewHeight = mHeaderView.getViewHeight();
-		mHeaderView.setGravity(Gravity.BOTTOM);
+        // init header height
+        mHeaderViewHeight = mHeaderView.getViewHeight();
+        mHeaderView.setGravity(Gravity.BOTTOM);
         addHeaderView(mHeaderView);
 
         mState = IDEL;
         updateHeaderViewByState(-mHeaderViewHeight);
-		
-		mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
 
-	}
+        mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
+
+    }
 
 }

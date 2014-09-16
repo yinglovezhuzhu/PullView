@@ -14,11 +14,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */	
+ */
 package com.opensource.pullview;
+
 /**
  * Usage The listener to listen refresh action.<br>
- * 
+ *
  * @author yinglovezhuzhu@gmail.com
  */
 public interface OnRefreshListener {
@@ -27,9 +28,9 @@ public interface OnRefreshListener {
 
     public static final int ERROR_CODE_LOADINGMORE = 1;
 
-	/**
-	 * On refresh.
-	 */
-	public void onRefresh();
+    /**
+     * On refresh.
+     */
+    public void onRefresh();
 
 }

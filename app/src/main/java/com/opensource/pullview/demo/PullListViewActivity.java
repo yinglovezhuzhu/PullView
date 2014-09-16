@@ -68,6 +68,7 @@ public class PullListViewActivity extends Activity {
                         }
                         mListView.refreshCompleted();
                         mListView.loadMoreCompleted(mDatas.size() < 50);
+                        Log.e(TAG, "Refresh finished +=====================^_^");
                     }
                     break;
                 case MSG_LOAD_DONE:
@@ -80,6 +81,7 @@ public class PullListViewActivity extends Activity {
                         }
                         mListView.refreshCompleted();
                         mListView.loadMoreCompleted(mDatas.size() < 50);
+                        Log.e(TAG, "Load more finished +=====================^_^");
                     }
                     break;
                 default:
@@ -112,12 +114,14 @@ public class PullListViewActivity extends Activity {
 		
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
+
+        mListView.setEnableOverScroll(true);
 		
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
 			public void onRefresh() {
-				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 3000);
+				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
 				Log.e(TAG, "Start refresh+=====================^_^");
 			}
         });
@@ -126,12 +130,11 @@ public class PullListViewActivity extends Activity {
 
 			@Override
 			public void onLoadMore() {
-				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
+				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
 				Log.e(TAG, "Start load more+=====================^_^");
 			}
         });
 		
-//		mListView.onFirstLoadingData("正在加载");
 		mListView.onFootLoading("正在加载");
 		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
 	}

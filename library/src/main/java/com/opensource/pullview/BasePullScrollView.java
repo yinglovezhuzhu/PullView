@@ -15,25 +15,34 @@ import android.widget.ScrollView;
 import com.opensource.pullview.utils.ViewUtil;
 
 /**
- *
  * Created by xiaoying on 14-9-15.
  */
 public abstract class BasePullScrollView extends ScrollView implements IPullView {
 
-    /** The rotate up anim. */
+    /**
+     * The rotate up anim.
+     */
     protected Animation mDownToUpAnimation;
-    /** The rotate down anim. */
+    /**
+     * The rotate down anim.
+     */
     protected Animation mUpToDownAnimation;
 
-    /** The scroll layout. */
+    /**
+     * The scroll layout.
+     */
     protected LinearLayout mScrollLayout;
 
-    /** The content layout */
+    /**
+     * The content layout
+     */
     protected LinearLayout mContentLayout;
 
     protected LinearLayout mFootContent;
 
-    /** The header view height. */
+    /**
+     * The header view height.
+     */
     protected int mHeaderViewHeight;
 
     protected int mFootContentHeight;
@@ -42,19 +51,29 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     protected int mBottomPosition;
 
-    /** Enable pull refresh. */
+    /**
+     * Enable pull refresh.
+     */
     protected boolean mEnablePullRefresh = false;
 
-    /** Enable over scroll */
+    /**
+     * Enable over scroll
+     */
     protected boolean mEnableOverScroll = true;
 
-    /** Pull refreshing. */
+    /**
+     * Pull refreshing.
+     */
     protected boolean mRefreshing = false;
 
-    /** The listener on refresh data. */
+    /**
+     * The listener on refresh data.
+     */
     protected OnRefreshListener mOnRefreshListener = null;
 
-    /** The state of the PullView. */
+    /**
+     * The state of the PullView.
+     */
     protected int mState = IDEL;
 
     /**
@@ -71,7 +90,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      * Constructor
      *
      * @param context the context
-     * @param attrs the attrs
+     * @param attrs   the attrs
      */
     public BasePullScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -85,7 +104,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     @Override
     public void addView(View child) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             mContentLayout.addView(child);
         } else {
             super.addView(child);
@@ -94,7 +113,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     @Override
     public void addView(View child, int index) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             mContentLayout.addView(child, index);
         } else {
             super.addView(child, index);
@@ -103,7 +122,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     @Override
     public void addView(View child, int width, int height) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             mContentLayout.addView(child, width, height);
         } else {
             super.addView(child, width, height);
@@ -112,7 +131,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     @Override
     public void addView(View child, android.view.ViewGroup.LayoutParams params) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             mContentLayout.addView(child, params);
         } else {
             super.addView(child, params);
@@ -122,7 +141,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     @Override
     public void addView(View child, int index,
                         android.view.ViewGroup.LayoutParams params) {
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             mContentLayout.addView(child, index, params);
         } else {
             super.addView(child, index, params);
@@ -136,7 +155,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
         mBottomPosition = t + getHeight();
         System.out.println("+++++++++++++++++" + getChildAt(0).getMeasuredHeight() + "<>scrollY "
                 + getScrollY() + "<>viewHeight " + getHeight() + "<> " + (getScrollY() + getHeight()) +
-        "<>" + (t + getHeight()));
+                "<>" + (t + getHeight()));
     }
 
     private int mLastY = 0;
@@ -148,20 +167,20 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mStartY = (int) event.getY();
-                if(!mRecording) {
+                if (!mRecording) {
                     mRecording = mBottomPosition == getChildAt(0).getMeasuredHeight();
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if(!mRecording) {
+                if (!mRecording) {
                     mRecording = mBottomPosition == getChildAt(0).getMeasuredHeight();
                     mStartY = mRecording ? tempY : mStartY;
                 }
-                if(mRecording && mEnableOverScroll) {
+                if (mRecording && mEnableOverScroll) {
                     int moveY = mStartY - tempY;
                     int scrollY = moveY / OFFSET_RATIO;
-                    if(moveY > 0) {
+                    if (moveY > 0) {
                         mFootContent.setPadding(0, 0, 0, scrollY - mFootContentHeight);
                         scrollTo(0, mTopPosition - (scrollY - mFootContentHeight - mLastY));
                     }
@@ -169,7 +188,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mRecording) {
+                if (mRecording) {
                     mFootContent.setPadding(0, 0, 0, -mFootContentHeight);
                 }
                 mRecording = false;
@@ -193,10 +212,11 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Add header view to scroll view.
+     *
      * @param headerView
      */
     protected void addHeaderView(View headerView) {
-        if(null == mContentLayout || null == headerView) {
+        if (null == mContentLayout || null == headerView) {
             return;
         }
         LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
@@ -224,6 +244,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Sets enable over scroll.
+     *
      * @param enable
      */
     public void setEnableOverScroll(boolean enable) {
@@ -232,6 +253,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Sets Footer background color
+     *
      * @param color
      */
     public void setFooterBackgroundColor(int color) {
@@ -240,6 +262,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Sets Footer background resource.
+     *
      * @param resId
      */
     public void setFooterBackgroundImageResource(int resId) {
@@ -250,6 +273,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      * Gets it is refreshing<br/>
      * </br><p/>If doing refresh operation, you need to use this method before {@link #refreshCompleted()}<br/>
      * to get it is refresh operation or not.
+     *
      * @return
      */
     public boolean isRefreshing() {
@@ -258,6 +282,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Add footer view
+     *
      * @param view
      */
     public void addFooterView(View view) {
@@ -273,6 +298,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Add footer view.
+     *
      * @param view
      * @param lp
      */
@@ -282,6 +308,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
 
     /**
      * Add footer view
+     *
      * @param view
      * @param index
      * @param lp

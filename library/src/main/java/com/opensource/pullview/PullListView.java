@@ -41,10 +41,9 @@ public class PullListView extends BasePullListView {
 
 
     private PullHeaderView mHeaderView;
-    private PullFooterView mFooterView;
 
     private String mLastRefreshTime = "";
-    private int mHeaderLebelVisiblity = View.VISIBLE;
+    private int mHeaderLabelVisiblity = View.VISIBLE;
 
     /**
      * Constructor
@@ -77,13 +76,17 @@ public class PullListView extends BasePullListView {
     }
 
 
+    private int mStartY = 0;
+    private boolean mRecording = false;
+    private boolean mIsBack = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mStartY = (int) event.getY();
                 if (!mRecording) {
-                    mRecording = mFirstItemIndex == 0 || mLastItemIndex == mTotalItemCount;
+                    mRecording = mFirstItemIndex == 0;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -132,55 +135,6 @@ public class PullListView extends BasePullListView {
                                 break;
                         }
                     }
-                } else if (mLastItemIndex == mTotalItemCount) {
-                    if (!mRecording) {
-                        mRecording = true;
-                        mStartY = tempY;
-                    }
-                    int moveY = mStartY - tempY;
-                    int scrollY = moveY / OFFSET_RATIO;
-                    if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnablePullLoad || mEnableOverScroll)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnablePullLoad && mEnableOverScroll)) {
-                        //可以向上pull的条件是
-                        //1.mState != LOADING，即非LOADING状态下
-                        //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
-                        // 或者mLoadMode == LoadMode.AUTO_LOAD时没有更多数据可加载但可以过度滑动（OverScroll）
-
-                        // Ensure that the process of setting padding, current position has always been at the footer,
-                        // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
-                        switch (mState) {
-                            case RELEASE_TO_LOAD: // release-to-load
-                                setSelection(mTotalItemCount);
-                                // Slide down, header part was covered, but not all be covered(Pull down to cancel)
-                                if (moveY > 0 && scrollY <= mFooterViewHeight) {
-                                    mState = PULL_TO_LOAD;
-                                } else if (moveY <= 0) { //Slide up(Pull up to make footer to show)
-                                    mState = IDEL;
-                                }
-                                updateFooterViewByState(scrollY - mFooterViewHeight);
-                                break;
-                            case PULL_TO_LOAD:
-                                setSelection(mTotalItemCount);
-                                // Pull up to the state can enter RELEASE_TO_REFRESH
-                                if (scrollY > mFooterViewHeight) {
-                                    mState = RELEASE_TO_LOAD;
-                                    mIsBack = true;
-                                } else if (moveY <= 0) {
-                                    mState = IDEL;
-                                }
-                                updateFooterViewByState(scrollY - mFooterViewHeight);
-                                break;
-                            case IDEL:
-                                if (moveY > 0) {
-                                    mState = PULL_TO_LOAD;
-                                }
-                                updateFooterViewByState(-mFooterViewHeight);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -209,30 +163,6 @@ public class PullListView extends BasePullListView {
                             updateHeaderViewByState(-mHeaderViewHeight);
                             break;
                     }
-                } else if (mLastItemIndex == mTotalItemCount) {
-                    switch (mState) {
-                        case IDEL:
-                            //Do nothing.
-                            break;
-                        case PULL_TO_LOAD:
-                            //Pull to load more data.
-                            mState = IDEL;
-                            updateFooterViewByState(-mFooterViewHeight);
-                            break;
-                        case RELEASE_TO_LOAD:
-                            if (mEnablePullLoad) {
-                                //Release to load more data.
-                                loadMore();
-                                mState = LOADING;
-                                updateFooterViewByState(0);
-                            } else {
-                                mState = IDEL;
-                                updateFooterViewByState(-mFooterViewHeight);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
                 }
                 mRecording = false;
                 mIsBack = false;
@@ -244,7 +174,94 @@ public class PullListView extends BasePullListView {
     }
 
     @Override
-    protected void updateHeaderViewByState(int paddingTop) {
+    public void refreshCompleted() {
+        super.refreshCompleted();
+        mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
+        updateHeaderViewByState(-mHeaderViewHeight);
+    }
+
+    /**
+     * Show loading view on header<br>
+     * <br><p>Use this method when no header view was added on PullListView.
+     *
+     * @param text
+     */
+    public void onHeadLoading(CharSequence text) {
+        mState = LOADING;
+        mHeaderView.setPadding(0, 0, 0, 0);
+        mHeaderView.setArrowVisibility(View.GONE);
+        mHeaderView.setProgressVisibility(View.VISIBLE);
+        mHeaderView.setTitileVisibility(View.VISIBLE);
+        mHeaderView.setLabelVisibility(View.GONE);
+        mHeaderView.startArrowAnimation(null);
+        mHeaderView.setTitleText(text);
+        mHeaderView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Show loading view on head<br>
+     * <br><p>Use this method when no header view was added on PullListView.
+     *
+     * @param resId
+     */
+    public void onHeadLoading(int resId) {
+        mState = LOADING;
+        mHeaderView.setPadding(0, 0, 0, 0);
+        mHeaderView.setArrowVisibility(View.GONE);
+        mHeaderView.setProgressVisibility(View.VISIBLE);
+        mHeaderView.setTitileVisibility(View.VISIBLE);
+        mHeaderView.setLabelVisibility(View.GONE);
+        mHeaderView.startArrowAnimation(null);
+        mHeaderView.setTitleText(resId);
+        mHeaderView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Set last refresh time<br>
+     * <p>The value of {@link #mLastRefreshTime} initialized to the time when create {@link com.opensource.pullview.PullListView} object.<br>
+     * You can set this value.
+     *
+     * @param time
+     */
+    public void setLastRefreshTime(String time) {
+        this.mLastRefreshTime = time;
+    }
+
+    /**
+     * Set header view label's visibility.<br>
+     * <p>You can set the value of {@link android.view.View#GONE}、{@link android.view.View#VISIBLE}<br>
+     *
+     * @param visibility
+     * @see android.view.View#GONE
+     * @see android.view.View#VISIBLE
+     */
+    public void setHeaderLabelVisibility(int visibility) {
+        this.mHeaderLabelVisiblity = visibility;
+        if (mHeaderLabelVisiblity == View.INVISIBLE) {
+            mHeaderLabelVisiblity = View.GONE;
+            return;
+        }
+        mHeaderView.setLabelVisibility(mHeaderLabelVisiblity);
+    }
+
+    /**
+     * Init views
+     *
+     * @param context
+     */
+    private void initView(Context context) {
+
+        mHeaderView = new PullHeaderView(context);
+        mHeaderView.setLabelVisibility(View.VISIBLE);
+        mHeaderViewHeight = mHeaderView.getViewHeight();
+        addHeaderView(mHeaderView, null, true);
+
+        mState = IDEL;
+        updateHeaderViewByState(-mHeaderViewHeight);
+        mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
+    }
+
+    private void updateHeaderViewByState(int paddingTop) {
         switch (mState) {
             case RELEASE_TO_LOAD:
                 mHeaderView.setArrowVisibility(View.VISIBLE);
@@ -286,198 +303,7 @@ public class PullListView extends BasePullListView {
                 break;
         }
         mHeaderView.setVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
-        mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
+        mHeaderView.setLabelVisibility(mHeaderLabelVisiblity);
         mHeaderView.setPadding(0, paddingTop, 0, 0);
-    }
-
-    @Override
-    protected void updateFooterViewByState(int paddingBottom) {
-        switch (mState) {
-            case RELEASE_TO_LOAD:
-                mFooterView.setArrowVisibility(View.VISIBLE);
-                mFooterView.setProgressVisibility(View.GONE);
-                mFooterView.startArrowAnimation(mDownToUpAnimation);
-                mFooterView.setTitleText(R.string.pull_view_release_to_load);
-                break;
-            case PULL_TO_LOAD:
-                mFooterView.setArrowVisibility(View.VISIBLE);
-                mFooterView.setProgressVisibility(View.GONE);
-
-                if (mIsBack) {
-                    mIsBack = false;
-                    mFooterView.startArrowAnimation(mUpToDownAnimation);
-                }
-                mFooterView.setTitleText(R.string.pull_view_pull_to_load);
-                break;
-            case LOADING:
-                mFooterView.setArrowVisibility(View.GONE);
-                mFooterView.setProgressVisibility(View.VISIBLE);
-                mFooterView.startArrowAnimation(null);
-                mFooterView.setTitleText(R.string.pull_view_loading);
-                break;
-            case IDEL:
-                mFooterView.setProgressVisibility(View.GONE);
-                mFooterView.startArrowAnimation(null);
-                mFooterView.setTitleText(R.string.pull_view_pull_to_load);
-                break;
-            default:
-                break;
-        }
-        mFooterView.setVisibility(mEnablePullLoad ? View.VISIBLE : View.INVISIBLE);
-        mFooterView.setPadding(0, 0, 0, paddingBottom);
-    }
-
-    @Override
-    protected void loadMore() {
-        if(null == mLoadMoreListener || mState == LOADING) {
-            return;
-        }
-        mRefreshing = false;
-        mLoadMoreListener.onLoadMore();
-    }
-
-    @Override
-    protected void refresh() {
-        if(null == mRefreshListener || mState == LOADING) {
-            return;
-        }
-        mRefreshing = true;
-        mRefreshListener.onRefresh();
-    }
-
-    @Override
-    public void refreshCompleted() {
-        super.refreshCompleted();
-        mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
-        updateHeaderViewByState(-mHeaderViewHeight);
-    }
-
-    @Override
-    public void loadMoreCompleted(boolean loadMoreable) {
-        super.loadMoreCompleted(null != mLoadMoreListener && loadMoreable);
-        updateFooterViewByState(-mFooterViewHeight);
-    }
-
-
-    /**
-     * Show loading view on header<br>
-     * <br><p>Use this method when no header view was added on PullListView.
-     *
-     * @param text
-     */
-    public void onHeadLoading(CharSequence text) {
-        mState = LOADING;
-        mHeaderView.setPadding(0, 0, 0, 0);
-        mHeaderView.setArrowVisibility(View.GONE);
-        mHeaderView.setProgressVisibility(View.VISIBLE);
-        mHeaderView.setTitileVisibility(View.VISIBLE);
-        mHeaderView.setLabelVisibility(View.GONE);
-        mHeaderView.startArrowAnimation(null);
-        mHeaderView.setTitleText(text);
-        mHeaderView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Show loading view on head<br>
-     * <br><p>Use this method when no header view was added on PullListView.
-     *
-     * @param resId
-     */
-    public void onHeadLoading(int resId) {
-        mState = LOADING;
-        mHeaderView.setPadding(0, 0, 0, 0);
-        mHeaderView.setArrowVisibility(View.GONE);
-        mHeaderView.setProgressVisibility(View.VISIBLE);
-        mHeaderView.setTitileVisibility(View.VISIBLE);
-        mHeaderView.setLabelVisibility(View.GONE);
-        mHeaderView.startArrowAnimation(null);
-        mHeaderView.setTitleText(resId);
-        mHeaderView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Show loading view on foot<br>
-     * <br><p>Use this method when header view was added on PullListView.
-     *
-     * @param text
-     */
-    public void onFootLoading(CharSequence text) {
-        mState = LOADING;
-        mFooterView.setPadding(0, 0, 0, 0);
-        mFooterView.setArrowVisibility(View.GONE);
-        mFooterView.setProgressVisibility(View.VISIBLE);
-        mFooterView.setTitileVisibility(View.VISIBLE);
-        mFooterView.startArrowAnimation(null);
-        mFooterView.setTitleText(text);
-        mFooterView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Show loading view on foot<br>
-     * <br><p>Use this method when header view was added on PullListView.
-     *
-     * @param resId
-     */
-    public void onFootLoading(int resId) {
-        mState = LOADING;
-        mFooterView.setPadding(0, 0, 0, 0);
-        mFooterView.setArrowVisibility(View.GONE);
-        mFooterView.setProgressVisibility(View.VISIBLE);
-        mFooterView.setTitileVisibility(View.VISIBLE);
-        mFooterView.startArrowAnimation(null);
-        mFooterView.setTitleText(resId);
-        mFooterView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Set last refresh time<br>
-     * <p>The value of {@link #mLastRefreshTime} initialized to the time when create {@link com.opensource.pullview.PullListView} object.<br>
-     * You can set this value.
-     *
-     * @param time
-     */
-    public void setLastRefreshTime(String time) {
-        this.mLastRefreshTime = time;
-    }
-
-    /**
-     * Set header view label's visibility.<br>
-     * <p>You can set the value of {@link android.view.View#GONE}、{@link android.view.View#VISIBLE}<br>
-     *
-     * @param visibility
-     * @see android.view.View#GONE
-     * @see android.view.View#VISIBLE
-     */
-    public void setHeaderLabelVisibility(int visibility) {
-        this.mHeaderLebelVisiblity = visibility;
-        if (mHeaderLebelVisiblity == View.INVISIBLE) {
-            mHeaderLebelVisiblity = View.GONE;
-            return;
-        }
-        mHeaderView.setLabelVisibility(mHeaderLebelVisiblity);
-    }
-
-    /**
-     * Init views
-     *
-     * @param context
-     */
-    private void initView(Context context) {
-
-        mHeaderView = new PullHeaderView(context);
-        mHeaderView.setLabelVisibility(View.VISIBLE);
-        mHeaderViewHeight = mHeaderView.getViewHeight();
-//		mHeaderView.invalidate();
-        addHeaderView(mHeaderView, null, true);
-
-        mFooterView = new PullFooterView(context);
-        mFooterViewHeight = mFooterView.getViewHeight();
-//		mFooterView.invalidate();
-        addFooterView(mFooterView, null, true);
-
-        mState = IDEL;
-        updateHeaderViewByState(-mHeaderViewHeight);
-        updateFooterViewByState(-mFooterViewHeight);
-        mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
     }
 }

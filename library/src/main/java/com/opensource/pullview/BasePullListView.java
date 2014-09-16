@@ -2,6 +2,8 @@ package com.opensource.pullview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -9,13 +11,14 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 /**
- *
  * Created by yinglovezhuzhu@gmail.com
  */
 public abstract class BasePullListView extends ListView implements IPullView, AbsListView.OnScrollListener {
 
     protected RotateAnimation mDownToUpAnimation;
     protected RotateAnimation mUpToDownAnimation;
+
+    private PullFooterView mFooterView;
 
     protected int mHeaderViewHeight;
     protected int mFooterViewHeight;
@@ -24,21 +27,26 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     protected int mLastItemIndex;
     protected int mTotalItemCount;
 
-    /** Whether it can refresh. */
+    /**
+     * Whether it can refresh.
+     */
     protected boolean mEnablePullRefresh = false;
-    /** Whether it can load more data. */
-    protected boolean mEnablePullLoad = false;
-    /** Is refreshing data */
+    /**
+     * Whether it can load more data.
+     */
+    protected boolean mEnableLoad = false;
+    /**
+     * Is refreshing data
+     */
     protected boolean mRefreshing = false;
-    /** Can be over scroll **/
+    /**
+     * Can be over scroll *
+     */
     protected boolean mEnableOverScroll = true;
 
     protected LoadMode mLoadMode = LoadMode.AUTO_LOAD;
 
-    protected int mStartY;
-    protected int mState;
-    protected boolean mRecording = false;
-    protected boolean mIsBack = false;
+    protected int mState = IDEL;
 
     protected OnRefreshListener mRefreshListener;
     protected OnLoadMoreListener mLoadMoreListener;
@@ -51,7 +59,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context) {
         super(context);
-        init();
+        initView(context);
     }
 
     /**
@@ -61,7 +69,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        initView(context);
     }
 
     /**
@@ -71,7 +79,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        initView(context);
     }
 
     @Override
@@ -87,7 +95,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (scrollState == SCROLL_STATE_IDLE && mLastItemIndex == mTotalItemCount && mState == IDEL) {
-            if (mEnablePullLoad && mLoadMode == LoadMode.AUTO_LOAD) {
+            if (mEnableLoad && mLoadMode == LoadMode.AUTO_LOAD) {
                 setSelection(mTotalItemCount);
                 loadMore();
                 mState = LOADING;
@@ -99,6 +107,107 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         }
     }
 
+    private int mStartY;
+    private boolean mRecording = false;
+    private boolean mIsBack = false;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartY = (int) event.getY();
+                if (!mRecording) {
+                    mRecording = mLastItemIndex == mTotalItemCount;
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int tempY = (int) event.getY();
+                if (mLastItemIndex == mTotalItemCount) {
+                    if (!mRecording) {
+                        mRecording = true;
+                        mStartY = tempY;
+                    }
+                    int moveY = mStartY - tempY;
+                    int scrollY = moveY / OFFSET_RATIO;
+                    if (mState != LOADING
+                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoad || mEnableOverScroll)
+                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoad && mEnableOverScroll)) {
+                        //可以向上pull的条件是
+                        //1.mState != LOADING，即非LOADING状态下
+                        //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
+                        // 或者mLoadMode == LoadMode.AUTO_LOAD时没有更多数据可加载但可以过度滑动（OverScroll）
+
+                        // Ensure that the process of setting padding, current position has always been at the footer,
+                        // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
+                        switch (mState) {
+                            case RELEASE_TO_LOAD: // release-to-load
+                                setSelection(mTotalItemCount);
+                                // Slide down, header part was covered, but not all be covered(Pull down to cancel)
+                                if (moveY > 0 && scrollY <= mFooterViewHeight) {
+                                    mState = PULL_TO_LOAD;
+                                } else if (moveY <= 0) { //Slide up(Pull up to make footer to show)
+                                    mState = IDEL;
+                                }
+                                updateFooterViewByState(scrollY - mFooterViewHeight);
+                                break;
+                            case PULL_TO_LOAD:
+                                setSelection(mTotalItemCount);
+                                // Pull up to the state can enter RELEASE_TO_REFRESH
+                                if (scrollY > mFooterViewHeight) {
+                                    mState = RELEASE_TO_LOAD;
+                                    mIsBack = true;
+                                } else if (moveY <= 0) {
+                                    mState = IDEL;
+                                }
+                                updateFooterViewByState(scrollY - mFooterViewHeight);
+                                break;
+                            case IDEL:
+                                if (moveY > 0) {
+                                    mState = PULL_TO_LOAD;
+                                }
+                                updateFooterViewByState(-mFooterViewHeight);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mLastItemIndex == mTotalItemCount) {
+                    switch (mState) {
+                        case IDEL:
+                            //Do nothing.
+                            break;
+                        case PULL_TO_LOAD:
+                            //Pull to load more data.
+                            mState = IDEL;
+                            updateFooterViewByState(-mFooterViewHeight);
+                            break;
+                        case RELEASE_TO_LOAD:
+                            if (mEnableLoad) {
+                                //Release to load more data.
+                                loadMore();
+                                mState = LOADING;
+                                updateFooterViewByState(0);
+                            } else {
+                                mState = IDEL;
+                                updateFooterViewByState(-mFooterViewHeight);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                mRecording = false;
+                mIsBack = false;
+                break;
+            default:
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
     @Override
     public void setOnScrollListener(OnScrollListener l) {
         this.mScrollListener = l;
@@ -107,24 +216,65 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     /**
      * Do load more operation.
      */
-    protected abstract void loadMore();
+    protected void loadMore() {
+        if (null == mLoadMoreListener || mState == LOADING) {
+            return;
+        }
+        mRefreshing = false;
+        mLoadMoreListener.onLoadMore();
+    }
 
     /**
      * Do refresh operation.
      */
-    protected abstract void refresh();
-
-    /**
-     * Update header view by state.
-     * @param paddingTop
-     */
-    protected abstract void updateHeaderViewByState(int paddingTop);
+    protected void refresh() {
+        if (null == mRefreshListener || mState == LOADING) {
+            return;
+        }
+        mRefreshing = true;
+        mRefreshListener.onRefresh();
+    }
 
     /**
      * Update footer view by state
+     *
      * @param paddingBottom
      */
-    protected abstract void updateFooterViewByState(int paddingBottom);
+    private void updateFooterViewByState(int paddingBottom) {
+        switch (mState) {
+            case RELEASE_TO_LOAD:
+                mFooterView.setArrowVisibility(View.VISIBLE);
+                mFooterView.setProgressVisibility(View.GONE);
+                mFooterView.startArrowAnimation(mDownToUpAnimation);
+                mFooterView.setTitleText(R.string.pull_view_release_to_load);
+                break;
+            case PULL_TO_LOAD:
+                mFooterView.setArrowVisibility(View.VISIBLE);
+                mFooterView.setProgressVisibility(View.GONE);
+
+                if (mIsBack) {
+                    mIsBack = false;
+                    mFooterView.startArrowAnimation(mUpToDownAnimation);
+                }
+                mFooterView.setTitleText(R.string.pull_view_pull_to_load);
+                break;
+            case LOADING:
+                mFooterView.setArrowVisibility(View.GONE);
+                mFooterView.setProgressVisibility(View.VISIBLE);
+                mFooterView.startArrowAnimation(null);
+                mFooterView.setTitleText(R.string.pull_view_loading);
+                break;
+            case IDEL:
+                mFooterView.setProgressVisibility(View.GONE);
+                mFooterView.startArrowAnimation(null);
+                mFooterView.setTitleText(R.string.pull_view_pull_to_load);
+                break;
+            default:
+                break;
+        }
+        mFooterView.setVisibility(mEnableLoad ? View.VISIBLE : View.INVISIBLE);
+        mFooterView.setPadding(0, 0, 0, paddingBottom);
+    }
 
     /**
      * Refresh data complete
@@ -138,9 +288,44 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     /**
      * Load more complete
      */
-    public void loadMoreCompleted(boolean loadMoreable) {
+    public void loadMoreCompleted(boolean canLoadmore) {
         mState = IDEL;
-        this.mEnablePullLoad = loadMoreable;
+        this.mEnableLoad = null != mLoadMoreListener && canLoadmore;
+        updateFooterViewByState(-mFooterViewHeight);
+    }
+
+    /**
+     * Show loading view on foot<br>
+     * <br><p>Use this method when header view was added on PullListView.
+     *
+     * @param text
+     */
+    public void onFootLoading(CharSequence text) {
+        mState = LOADING;
+        mFooterView.setPadding(0, 0, 0, 0);
+        mFooterView.setArrowVisibility(View.GONE);
+        mFooterView.setProgressVisibility(View.VISIBLE);
+        mFooterView.setTitileVisibility(View.VISIBLE);
+        mFooterView.startArrowAnimation(null);
+        mFooterView.setTitleText(text);
+        mFooterView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Show loading view on foot<br>
+     * <br><p>Use this method when header view was added on PullListView.
+     *
+     * @param resId
+     */
+    public void onFootLoading(int resId) {
+        mState = LOADING;
+        mFooterView.setPadding(0, 0, 0, 0);
+        mFooterView.setArrowVisibility(View.GONE);
+        mFooterView.setProgressVisibility(View.VISIBLE);
+        mFooterView.setTitileVisibility(View.VISIBLE);
+        mFooterView.startArrowAnimation(null);
+        mFooterView.setTitleText(resId);
+        mFooterView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -160,7 +345,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void setOnLoadMoreListener(OnLoadMoreListener listener) {
         this.mLoadMoreListener = listener;
-        mEnablePullLoad = null != listener;
+        mEnableLoad = null != listener;
     }
 
     /**
@@ -178,9 +363,10 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
 
     /**
      * Sets the pull listview can over scroll or not.
+     *
      * @param enable
      */
-    public void setOverScrollEnable(boolean enable) {
+    public void setEnableOverScroll(boolean enable) {
         this.mEnableOverScroll = enable;
     }
 
@@ -188,13 +374,14 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      * Gets it is refreshing<br/>
      * </br><p/>If doing refresh operation, you need to use this method before {@link #refreshCompleted()}<br/>
      * to get it is refresh operation or not.
+     *
      * @return
      */
     public boolean isRefreshing() {
         return mRefreshing;
     }
 
-    private void init() {
+    private void initView(Context context) {
         mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
         mDownToUpAnimation.setDuration(ROTATE_ANIMATION_DURATION);
@@ -205,6 +392,10 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         mUpToDownAnimation.setInterpolator(new LinearInterpolator());
         mUpToDownAnimation.setDuration(ROTATE_ANIMATION_DURATION);
         mUpToDownAnimation.setFillAfter(true);
+
+        mFooterView = new PullFooterView(context);
+        mFooterViewHeight = mFooterView.getViewHeight();
+        addFooterView(mFooterView, null, true);
 
         super.setOnScrollListener(this);
     }

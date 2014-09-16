@@ -68,9 +68,7 @@ public class PullListView2Activity extends Activity {
                         mListView.refreshCompleted();
                         boolean loadMoreable = mDatas.size() < 50;
                         mListView.loadMoreCompleted(loadMoreable);
-
-//                        mListView.loadMoreCompleted(mDatas.size() < 50);
-//                        mListView.loadMoreCompleted(false);
+                        Log.e(TAG, "Refresh finished +=====================^_^");
                     }
                     break;
                 case MSG_REFLESH_ERROR:
@@ -86,9 +84,7 @@ public class PullListView2Activity extends Activity {
                         mListView.refreshCompleted();
                         boolean loadMoreable = mDatas.size() < 50;
                         mListView.loadMoreCompleted(loadMoreable);
-
-//                        mListView.loadMoreCompleted(mDatas.size() < 50);
-//                        mListView.loadMoreCompleted(false);
+                        Log.e(TAG, "Load more finished +=====================^_^");
                     }
                     break;
                 default:
@@ -112,12 +108,14 @@ public class PullListView2Activity extends Activity {
 		
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
+
+        mListView.setEnableOverScroll(true);
 		
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
 			public void onRefresh() {
-				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 3000);
+				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
 				Log.e(TAG, "Start refresh+=====================^_^");
 			}
         });
@@ -126,7 +124,7 @@ public class PullListView2Activity extends Activity {
 
 			@Override
 			public void onLoadMore() {
-				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 1000);
+				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
 				Log.e(TAG, "Start load more+=====================^_^");
 			}
 		});
