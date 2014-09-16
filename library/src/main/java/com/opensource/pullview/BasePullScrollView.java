@@ -70,51 +70,6 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
         super.computeScroll();
     }
 
-//    @Override
-//    public void addView(View child) {
-//        if(getChildCount() > 0) {
-//            mScrollLayout.addView(child);
-//        } else {
-//            super.addView(child);
-//        }
-//    }
-//
-//    @Override
-//    public void addView(View child, int index) {
-//        if(getChildCount() > 0) {
-//            mScrollLayout.addView(child, index);
-//        } else {
-//            super.addView(child, index);
-//        }
-//    }
-//
-//    @Override
-//    public void addView(View child, int width, int height) {
-//        if(getChildCount() > 0) {
-//            mScrollLayout.addView(child, width, height);
-//        } else {
-//            super.addView(child, width, height);
-//        }
-//    }
-//
-//    @Override
-//    public void addView(View child, android.view.ViewGroup.LayoutParams params) {
-//        if(getChildCount() > 0) {
-//            mScrollLayout.addView(child, params);
-//        } else {
-//            super.addView(child, params);
-//        }
-//    }
-//
-//    @Override
-//    public void addView(View child, int index,
-//                        android.view.ViewGroup.LayoutParams params) {
-//        if(getChildCount() > 0) {
-//            mScrollLayout.addView(child, index, params);
-//        } else {
-//            super.addView(child, index, params);
-//        }
-//    }
     @Override
     public void addView(View child) {
         if(getChildCount() > 0) {
@@ -182,6 +137,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      */
     public void refreshComplete() {
         mState = IDEL;
+        mRefreshing = false;
     }
 
     /**

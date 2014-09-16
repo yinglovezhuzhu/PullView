@@ -131,7 +131,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void refreshCompleted() {
         mState = IDEL;
-//        mRefreshing = false;
+        mRefreshing = false;
         mRecording = false;
     }
 
@@ -185,7 +185,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     }
 
     /**
-     * It's refreshing
+     * Gets it is refreshing
      * @return
      */
     public boolean isRefreshing() {
