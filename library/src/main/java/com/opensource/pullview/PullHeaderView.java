@@ -36,9 +36,6 @@ import com.opensource.pullview.utils.ViewUtil;
  */
 public class PullHeaderView extends LinearLayout {
 
-	/** The header view. */
-	private LinearLayout mHeaderView;
-
 	/** The arrow image view. */
 	private ImageView mArrowImageView;
 	
@@ -88,9 +85,6 @@ public class PullHeaderView extends LinearLayout {
         mProgress = (ProgressBar) findViewById(R.id.pb_pullview_header_progress);
         mTvTitle = (TextView) findViewById(R.id.tv_pullview_header_title);
         mTvLabel = (TextView) findViewById(R.id.tv_pullview_header_label);
-
-        //FIXME Delete this
-        mHeaderView = (LinearLayout) findViewById(R.id.ll_pullview_header);
 
         //Get height of this header view.
 		ViewUtil.measureView(this);
@@ -197,28 +191,7 @@ public class PullHeaderView extends LinearLayout {
 		return mHeaderViewHeight;
 	}
 
-	/**
-	 * Sets the visiable height.
-	 *
-	 * @param height the new visiable height
-	 */
-	public void setVisiableHeight(int height) {
-		if (height < 0) height = 0;
-		LayoutParams lp = (LayoutParams) mHeaderView.getLayoutParams();
-		lp.height = height;
-		mHeaderView.setLayoutParams(lp);
-	}
 
-	/**
-	 * Gets the visiable height.
-	 *
-	 * @return the visiable height
-	 */
-	public int getVisiableHeight() {
-		LayoutParams lp = (LayoutParams)mHeaderView.getLayoutParams();
-		return lp.height;
-	}
-	
 	/**
 	 * 
 	 * Set title text color
@@ -237,16 +210,6 @@ public class PullHeaderView extends LinearLayout {
 		mTvLabel.setTextColor(color);
 	}
 	
-	/**
-	 *
-	 * Set Background color
-	 * @param color
-	 * @throws
-	 */
-	public void setBackgroundColor(int color){
-		mHeaderView.setBackgroundColor(color);
-	}
-
 	/**
 	 * 
 	 * Get progress

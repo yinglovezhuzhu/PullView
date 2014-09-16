@@ -3,12 +3,16 @@ package com.opensource.pullview;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+
+import com.opensource.pullview.utils.ViewUtil;
 
 /**
  *
@@ -27,10 +31,16 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     /** The content layout */
     protected LinearLayout mContentLayout;
 
+    protected LinearLayout mFootContent;
+
     /** The header view height. */
     protected int mHeaderViewHeight;
 
-    protected int mTopScroll;
+    protected int mFootContentHeight;
+
+    protected int mTopPosition;
+
+    protected int mBottomPosition;
 
     /** Enable pull refresh. */
     protected boolean mEnablePullRefresh = false;
@@ -122,7 +132,52 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        mTopScroll = t;
+        mTopPosition = t;
+        mBottomPosition = t + getHeight();
+        System.out.println("+++++++++++++++++" + getChildAt(0).getMeasuredHeight() + "<>scrollY "
+                + getScrollY() + "<>viewHeight " + getHeight() + "<> " + (getScrollY() + getHeight()) +
+        "<>" + (t + getHeight()));
+    }
+
+    private int mLastY = 0;
+    private int mStartY = 0;
+    private boolean mRecording = false;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mStartY = (int) event.getY();
+                if(!mRecording) {
+                    mRecording = mBottomPosition == getChildAt(0).getMeasuredHeight();
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int tempY = (int) event.getY();
+                if(!mRecording) {
+                    mRecording = mBottomPosition == getChildAt(0).getMeasuredHeight();
+                    mStartY = mRecording ? tempY : mStartY;
+                }
+                if(mRecording && mEnableOverScroll) {
+                    int moveY = mStartY - tempY;
+                    int scrollY = moveY / OFFSET_RATIO;
+                    if(moveY > 0) {
+                        mFootContent.setPadding(0, 0, 0, scrollY - mFootContentHeight);
+                        scrollTo(0, mTopPosition - (scrollY - mFootContentHeight - mLastY));
+                    }
+                    mLastY = scrollY;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if(mRecording) {
+                    mFootContent.setPadding(0, 0, 0, -mFootContentHeight);
+                }
+                mRecording = false;
+                break;
+            default:
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     /**
@@ -134,6 +189,20 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      * Refresh operation
      */
     protected abstract void refresh();
+
+
+    /**
+     * Add header view to scroll view.
+     * @param headerView
+     */
+    protected void addHeaderView(View headerView) {
+        if(null == mContentLayout || null == headerView) {
+            return;
+        }
+        LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        mScrollLayout.addView(headerView, 0, headerLp);
+    }
 
     /**
      * Refresh complete.
@@ -162,6 +231,22 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     }
 
     /**
+     * Sets Footer background color
+     * @param color
+     */
+    public void setFooterBackgroundColor(int color) {
+        mFootContent.setBackgroundColor(color);
+    }
+
+    /**
+     * Sets Footer background resource.
+     * @param resId
+     */
+    public void setFooterBackgroundImageResource(int resId) {
+        mFootContent.setBackgroundResource(resId);
+    }
+
+    /**
      * Gets it is refreshing<br/>
      * </br><p/>If doing refresh operation, you need to use this method before {@link #refreshCompleted()}<br/>
      * to get it is refresh operation or not.
@@ -172,16 +257,40 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     }
 
     /**
-     * Add header view to scroll view.
-     * @param headerView
+     * Add footer view
+     * @param view
      */
-    protected void addHeaderView(View headerView) {
-        if(null == mContentLayout || null == headerView) {
-            return;
+    public void addFooterView(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (params == null) {
+            params = generateDefaultLayoutParams();
+            if (params == null) {
+                throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
+            }
         }
-        LinearLayout.LayoutParams headerLp = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        mScrollLayout.addView(headerView, 0, headerLp);
+        addFooterView(view, params);
+    }
+
+    /**
+     * Add footer view.
+     * @param view
+     * @param lp
+     */
+    public void addFooterView(View view, ViewGroup.LayoutParams lp) {
+        addFooterView(view, -1, lp);
+    }
+
+    /**
+     * Add footer view
+     * @param view
+     * @param index
+     * @param lp
+     */
+    public void addFooterView(View view, int index, ViewGroup.LayoutParams lp) {
+        mFootContent.addView(view, index, lp);
+        ViewUtil.measureView(mFootContent);
+        mFootContentHeight = mFootContent.getMeasuredHeight();
+        mFootContent.setPadding(0, 0, 0, -mFootContentHeight);
     }
 
     /**
@@ -213,6 +322,12 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         contentLp.weight = 1;
         mScrollLayout.addView(mContentLayout, contentLp);
+
+        mFootContent = new LinearLayout(context);
+        mFootContent.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams footLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mScrollLayout.addView(mFootContent, footLp);
 
         LayoutParams scrollLp = new LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT, Gravity.TOP);

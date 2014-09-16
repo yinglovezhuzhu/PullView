@@ -33,9 +33,13 @@ import com.opensource.pullview.utils.DateUtil;
  * 
  * @author yinglovezhuzhu@gmail.com
  */
-public class PullScrollView extends BasePullScrollView {
+public class PullScrollView_back extends BasePullScrollView {
 
     private PullHeaderView mHeaderView;
+
+    private int mStartY = 0;
+    private boolean mRecording = false;
+    private boolean mIsBack = false;
 
 	private String mLastRefreshTime = "";
 
@@ -43,28 +47,24 @@ public class PullScrollView extends BasePullScrollView {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param context the context
 	 */
-	public PullScrollView(Context context) {
+	public PullScrollView_back(Context context) {
 		super(context);
 		initView(context);
 	}
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param context the context
 	 * @param attrs the attrs
 	 */
-	public PullScrollView(Context context, AttributeSet attrs) {
+	public PullScrollView_back(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView(context);
 	}
-
-    private int mStartY = 0;
-    private boolean mRecording = false;
-    private boolean mIsBack = false;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -90,9 +90,9 @@ public class PullScrollView extends BasePullScrollView {
                         switch (mState) {
                             case RELEASE_TO_LOAD: // Release to load data
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
-                                if(scrollY > 0) {
-                                    scrollTo(0, 0);
-                                }
+                                    if(scrollY > 0) {
+                                        scrollTo(0, 0);
+                                    }
                                 if (moveY > 0 && (scrollY < mHeaderViewHeight)) {
                                     mState = PULL_TO_LOAD;
                                 } else if (moveY <= 0) {
@@ -127,7 +127,7 @@ public class PullScrollView extends BasePullScrollView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mRecording) {
+                if(mTopPosition == 0) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.

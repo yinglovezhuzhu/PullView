@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.ImageView;
 
 import com.opensource.pullview.OnRefreshListener;
 import com.opensource.pullview.PullScrollView;
@@ -63,14 +64,23 @@ public class PullScrollViewActivity extends Activity {
 		setContentView(R.layout.activity_pull_scroll_view);
 		
 		mPullScrollView = (PullScrollView) findViewById(R.id.pull_scroll_view);
+
+        mPullScrollView.setEnableOverScroll(true);
 		mPullScrollView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
 			public void onRefresh() {
-				mHandler.sendEmptyMessageDelayed(MSG_REFRESH_DONE, 20000);
+				mHandler.sendEmptyMessageDelayed(MSG_REFRESH_DONE, 3000);
 			}
 
         });
+        mPullScrollView.setFooterBackgroundColor(0xFFaabbcc);
+        mPullScrollView.setEnableOverScroll(true);
+
+        ImageView iv = new ImageView(this);
+        iv.setPadding(0, 80, 0, 0);
+        iv.setImageResource(com.opensource.pullview.R.drawable.ic_launcher);
+        mPullScrollView.addFooterView(iv);
 	}
 
 }
