@@ -2,7 +2,7 @@ PullView
 ========
 <p/>
 2014-09-16 v1.1.0<br/>
-=====================================================================================<br/>
+-----------------------------------------------------------------------<br/>
 PullView v1.1.0,包含PullScrollView，PullListView和PullListView2三个自定义控件：<br/>
 1、PullScrollView，这是一个可以下拉刷新的ScrollView，其实也可以用PullListView或者PullListView2来实现PullScrollView的功能;<br/><br/>
 2、PullListView，PullListView是一个可以下拉刷新，上拉加载更多（滑动到底部自动加载更多）的ListView，而且可以实现过多滑动的效果;<br/><br/>
