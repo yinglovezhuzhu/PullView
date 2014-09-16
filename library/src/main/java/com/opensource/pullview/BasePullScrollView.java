@@ -135,7 +135,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     /**
      * Refresh complete.
      */
-    public void refreshComplete() {
+    public void refreshCompleted() {
         mState = IDEL;
         mRefreshing = false;
     }
@@ -151,7 +151,9 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     }
 
     /**
-     * Gets If it is refreshing
+     * Gets it is refreshing<br/>
+     * </br><p/>If doing refresh operation, you need to use this method before {@link #refreshCompleted()}<br/>
+     * to get it is refresh operation or not.
      * @return
      */
     public boolean isRefreshing() {

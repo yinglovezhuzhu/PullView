@@ -31,7 +31,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     /** Is refreshing data */
     protected boolean mRefreshing = false;
     /** Can be over scroll **/
-    protected boolean mOverScrollable = true;
+    protected boolean mEnableOverScroll = true;
 
     protected LoadMode mLoadMode = LoadMode.AUTO_LOAD;
 
@@ -178,14 +178,16 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
 
     /**
      * Sets the pull listview can over scroll or not.
-     * @param overScrollable
+     * @param enable
      */
-    public void setOverScrollable(boolean overScrollable) {
-        this.mOverScrollable = overScrollable;
+    public void setOverScrollEnable(boolean enable) {
+        this.mEnableOverScroll = enable;
     }
 
     /**
-     * Gets it is refreshing
+     * Gets it is refreshing<br/>
+     * </br><p/>If doing refresh operation, you need to use this method before {@link #refreshCompleted()}<br/>
+     * to get it is refresh operation or not.
      * @return
      */
     public boolean isRefreshing() {

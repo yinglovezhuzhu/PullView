@@ -218,8 +218,8 @@ public class PullScrollView extends BasePullScrollView {
 
 
     @Override
-	public void refreshComplete() {
-        super.refreshComplete();
+	public void refreshCompleted() {
+        super.refreshCompleted();
         updateHeaderViewByState(-mHeaderViewHeight);
         mLastRefreshTime = DateUtil.getSystemDate("yyyy-MM-dd HH:mm:ss");
         mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);

@@ -45,7 +45,7 @@ public class PullScrollViewActivity extends Activity {
 			switch (msg.what) {
 			case MSG_REFRESH_DONE:
 				if(null != mPullScrollView) {
-					mPullScrollView.refreshComplete();
+					mPullScrollView.refreshCompleted();
 				}
 				break;
 

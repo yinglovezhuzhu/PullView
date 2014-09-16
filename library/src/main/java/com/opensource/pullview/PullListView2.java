@@ -152,8 +152,8 @@ public class PullListView2 extends BasePullListView {
                     int moveY = mStartY - tempY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnablePullLoad || mOverScrollable)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnablePullLoad && mOverScrollable)) {
+                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnablePullLoad || mEnableOverScroll)
+                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnablePullLoad && mEnableOverScroll)) {
                         //可以向上pull的条件是
                         //1.mState != LOADING，即非LOADING状态下
                         //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
