@@ -81,7 +81,7 @@ public class PullScrollView extends BasePullScrollView {
                     mRecording = mTopScroll == 0;
                     mStartY = mRecording ? tempY : mStartY;
                 }
-                if(mRecording) {
+                if(mRecording || mEnableOverScroll) {
                     int moveY = tempY - mStartY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING) {

@@ -35,6 +35,9 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     /** Enable pull refresh. */
     protected boolean mEnablePullRefresh = false;
 
+    /** Enable over scroll */
+    protected boolean mEnableOverScroll = true;
+
     /** Pull refreshing. */
     protected boolean mRefreshing = false;
 
@@ -148,6 +151,14 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
     public void setOnRefreshListener(OnRefreshListener listener) {
         mOnRefreshListener = listener;
         mEnablePullRefresh = null != listener;
+    }
+
+    /**
+     * Sets enable over scroll.
+     * @param enable
+     */
+    public void setEnableOverScroll(boolean enable) {
+        this.mEnableOverScroll = enable;
     }
 
     /**
