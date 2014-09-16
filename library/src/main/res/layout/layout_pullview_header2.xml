@@ -30,8 +30,7 @@
             android:id="@+id/ll_pull_listview_header_bg_content"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/iv_pull_listview_header_bg"
                 android:layout_width="match_parent"
@@ -71,7 +70,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
-            android:indeterminate="false"
-            android:visibility="invisible"/>
+            android:indeterminate="false" />
     </LinearLayout>
 </RelativeLayout>

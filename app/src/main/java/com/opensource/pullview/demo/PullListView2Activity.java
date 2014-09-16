@@ -103,14 +103,13 @@ public class PullListView2Activity extends Activity {
 		mListView = (PullListView2) findViewById(R.id.pull_list_view2);
 		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
 //		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
-//		mListView.setHeaderLabelVisibility(View.VISIBLE);
-//		mListView.setLastRefreshTime(DateUtil.getYesterdayDate(getString(R.string.pull_view_date_format)));
-		
+        mListView.setEnableOverScroll(true);
+
+
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
 
-        mListView.setEnableOverScroll(true);
-		
+
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
@@ -129,7 +128,6 @@ public class PullListView2Activity extends Activity {
 			}
 		});
 		
-//		mListView.onFirstLoadingData("正在加载");
 		mListView.onFootLoading("正在加载");
 		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 1000);
 	}
