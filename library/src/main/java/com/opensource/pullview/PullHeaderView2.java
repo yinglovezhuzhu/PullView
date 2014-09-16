@@ -79,41 +79,6 @@ public class PullHeaderView2 extends LinearLayout {
     }
 
     /**
-     * Inits the view.
-     *
-     * @param context the context
-     */
-    private void initView(Context context) {
-
-        View.inflate(context, R.layout.layout_pullview_header2, this);
-
-        mTopContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_top);
-        mBackgroundContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_bg_content);
-        mViewContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_view_content);
-        mStateContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_state_content);
-        mIvBg = (ImageView) findViewById(R.id.iv_pull_listview_header_bg);
-
-        //这里进行对背景图片的ImageView进行宽度限制，是为了配合adjustViewBounds属性
-        ViewGroup.LayoutParams bgLayoutParams = mIvBg.getLayoutParams();
-        if (null == bgLayoutParams) {
-            bgLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-        bgLayoutParams.width = context.getResources().getDisplayMetrics().widthPixels;
-        mIvBg.setLayoutParams(bgLayoutParams);
-
-        ViewUtil.measureView(mViewContent);
-        mVisibleHeight = mViewContent.getMeasuredHeight();
-
-        ViewUtil.measureView(this);
-        mViewHeight = this.getMeasuredHeight();
-
-        ViewUtil.measureView(mStateContent);
-        mStateViewHeight = mStateContent.getMeasuredHeight();
-        mStateContent.setPadding(0, mViewHeight - mVisibleHeight - mStateViewHeight, 0, 0);
-
-    }
-
-    /**
      * Sets state view padding
      *
      * @param left
@@ -219,4 +184,65 @@ public class PullHeaderView2 extends LinearLayout {
         View.inflate(getContext(), layoutId, mBackgroundContent);
     }
 
+    /**
+     * Sets header content view.
+     *
+     * @param contentView
+     */
+    public void setContentView(View contentView) {
+        if (null == contentView) {
+            return;
+        }
+        mViewContent.removeAllViews();
+        mViewContent.addView(contentView);
+    }
+
+    /**
+     * Sets header content view.
+     *
+     * @param layoutId
+     */
+    public void setContentView(int layoutId) {
+        if (0 == layoutId) {
+            return;
+        }
+        mViewContent.removeAllViews();
+        View.inflate(getContext(), layoutId, mViewContent);
+    }
+
+
+    /**
+     * Inits the view.
+     *
+     * @param context the context
+     */
+    private void initView(Context context) {
+
+        View.inflate(context, R.layout.layout_pullview_header2, this);
+
+        mTopContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_top);
+        mBackgroundContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_bg_content);
+        mViewContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_view_content);
+        mStateContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_state_content);
+        mIvBg = (ImageView) findViewById(R.id.iv_pull_listview_header_bg);
+
+        //这里进行对背景图片的ImageView进行宽度限制，是为了配合adjustViewBounds属性
+        ViewGroup.LayoutParams bgLayoutParams = mIvBg.getLayoutParams();
+        if (null == bgLayoutParams) {
+            bgLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        bgLayoutParams.width = context.getResources().getDisplayMetrics().widthPixels;
+        mIvBg.setLayoutParams(bgLayoutParams);
+
+        ViewUtil.measureView(mViewContent);
+        mVisibleHeight = mViewContent.getMeasuredHeight();
+
+        ViewUtil.measureView(this);
+        mViewHeight = this.getMeasuredHeight();
+
+        ViewUtil.measureView(mStateContent);
+        mStateViewHeight = mStateContent.getMeasuredHeight();
+        mStateContent.setPadding(0, mViewHeight - mVisibleHeight - mStateViewHeight, 0, 0);
+
+    }
 }

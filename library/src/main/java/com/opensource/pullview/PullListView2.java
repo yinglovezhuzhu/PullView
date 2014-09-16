@@ -258,6 +258,24 @@ public class PullListView2 extends BasePullListView {
     }
 
     /**
+     * Sets header content view
+     *
+     * @param contentView
+     */
+    public void setHeaderContentView(View contentView) {
+        mHeaderView.setContentView(contentView);
+    }
+
+    /**
+     * Sets header content view
+     *
+     * @param layoutId
+     */
+    public void setHeaderContentView(int layoutId) {
+        mHeaderView.setContentView(layoutId);
+    }
+
+    /**
      * Init views
      *
      * @param context
