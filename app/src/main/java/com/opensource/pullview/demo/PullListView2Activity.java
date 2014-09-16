@@ -105,6 +105,8 @@ public class PullListView2Activity extends Activity {
 //		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
         mListView.setEnableOverScroll(true);
 
+//        mListView.setHeaderTopView(R.layout.layout_header_top);
+
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);

@@ -210,6 +210,22 @@ public class PullHeaderView2 extends LinearLayout {
         View.inflate(getContext(), layoutId, mViewContent);
     }
 
+    public void setTopView(int layoutId) {
+        if (0 == layoutId) {
+            return;
+        }
+        mTopContent.removeAllViews();
+        View.inflate(getContext(), layoutId, mTopContent);
+        ViewUtil.measureView(mViewContent);
+        mVisibleHeight = mViewContent.getMeasuredHeight();
+
+        ViewUtil.measureView(this);
+        mViewHeight = this.getMeasuredHeight();
+
+        ViewUtil.measureView(mStateContent);
+        mStateViewHeight = mStateContent.getMeasuredHeight();
+    }
+
 
     /**
      * Inits the view.
