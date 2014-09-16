@@ -153,9 +153,6 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
         super.onScrollChanged(l, t, oldl, oldt);
         mTopPosition = t;
         mBottomPosition = t + getHeight();
-        System.out.println("+++++++++++++++++" + getChildAt(0).getMeasuredHeight() + "<>scrollY "
-                + getScrollY() + "<>viewHeight " + getHeight() + "<> " + (getScrollY() + getHeight()) +
-                "<>" + (t + getHeight()));
     }
 
     private int mLastY = 0;
