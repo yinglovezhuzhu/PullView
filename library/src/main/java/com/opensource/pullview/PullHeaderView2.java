@@ -18,8 +18,9 @@
 package com.opensource.pullview;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -34,28 +35,53 @@ import com.opensource.pullview.utils.ViewUtil;
  */
 public class PullHeaderView2 extends LinearLayout {
 
+    private static final int DEFAULT_MIN_VISIBLE_HEIGHT = 200;
+    /**
+     * The top view content *
+     */
     private LinearLayout mTopContent;
-
+    /**
+     * The background view content *
+     */
     private LinearLayout mBackgroundContent;
-
+    /**
+     * The content view content *
+     */
     private LinearLayout mViewContent;
-
+    /**
+     * the state view content *
+     */
     private LinearLayout mStateContent;
 
-    private ImageView mIvBg;
+    /**
+     * The height of top view *
+     */
+    private int mTopViewHeight = 0;
+    /**
+     * The height of background content *
+     */
+    private int mBackgroundHeight = 0;
+    /**
+     * The height of content *
+     */
+    private int mContentViewHeight = 0;
 
     /**
-     * The head content height.
+     * The ImageView to show background image *
      */
-    private int mViewHeight;
+    ImageView mIvBackground;
     /**
-     * The state view content height *
+     * The height of this head view content.
      */
-    private int mStateViewHeight;
+    int mViewHeight = 0;
     /**
-     * The visible height *
+     * The height of state view content *
      */
-    private int mVisibleHeight;
+    int mStateViewHeight = 0;
+    /**
+     * The min height visible *
+     */
+    int mVisibleHeight = DEFAULT_MIN_VISIBLE_HEIGHT;
 
     /**
      * Instantiates a new ab list view header.
@@ -100,57 +126,12 @@ public class PullHeaderView2 extends LinearLayout {
     }
 
     /**
-     * Gets the header height.
-     *
-     * @return the header height
-     */
-    public int getViewHeight() {
-        return mViewHeight;
-    }
-
-    /**
-     * Gets visible height.
-     *
-     * @return
-     */
-    public int getVisibleHeight() {
-        return mVisibleHeight;
-    }
-
-    /**
      * Gets state view height
      *
      * @return
      */
     public int getStateViewHeight() {
         return mStateViewHeight;
-    }
-
-    /**
-     * Gets ImageView to set background image.
-     *
-     * @return
-     */
-    public ImageView getBackgroudImageView() {
-        return mIvBg;
-    }
-
-    /**
-     * Sets background image to ImageView
-     *
-     * @param resId
-     */
-    public void setBackgroudImage(int resId) {
-        mIvBg.setImageResource(resId);
-    }
-
-    /**
-     * Sets background image to ImageView
-     *
-     * @param bm
-     */
-    public void setBackgroundImage(Bitmap bm) {
-        mIvBg.setImageBitmap(bm);
     }
 
     /**
@@ -164,24 +145,28 @@ public class PullHeaderView2 extends LinearLayout {
         if (null == backgroundView) {
             return;
         }
-        mBackgroundContent.removeAllViews();
-        mBackgroundContent.addView(backgroundView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-    }
-
-    /**
-     * Sets background view<br/><br/>
-     * <p/>
-     * If you use this method to set background view, it will replace default background ImageView.
-     *
-     * @param layoutId
-     */
-    public void setBackgroudView(int layoutId) {
-        if (0 == layoutId) {
-            return;
+        ViewUtil.measureView(backgroundView);
+        int backgroundViewHeight = backgroundView.getMeasuredHeight();
+        if (backgroundViewHeight > mBackgroundHeight) {
+            mBackgroundHeight = backgroundViewHeight;
+            layoutBackgroundContent(mBackgroundHeight);
         }
         mBackgroundContent.removeAllViews();
-        View.inflate(getContext(), layoutId, mBackgroundContent);
+        mBackgroundContent.addView(backgroundView, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        ViewUtil.measureView(this);
+        mViewHeight = mTopViewHeight + mBackgroundHeight;
+    }
+
+    public void setBackgroundView(int layoutId) {
+        View backgroundView = null;
+        try {
+            backgroundView = View.inflate(getContext(), layoutId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setBackgroundView(backgroundView);
     }
 
     /**
@@ -193,37 +178,66 @@ public class PullHeaderView2 extends LinearLayout {
         if (null == contentView) {
             return;
         }
+        ViewUtil.measureView(contentView);
+        int contentViewHeight = contentView.getMeasuredHeight();
+        if (contentViewHeight > mBackgroundHeight) {
+            mBackgroundHeight = contentViewHeight;
+            layoutBackgroundContent(mBackgroundHeight);
+        }
         mViewContent.removeAllViews();
-        mViewContent.addView(contentView);
+        mViewContent.addView(contentView, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        ViewUtil.measureView(this);
+        mContentViewHeight = contentViewHeight;
+        mVisibleHeight = mContentViewHeight > mVisibleHeight
+                ? mContentViewHeight : mVisibleHeight; //最小可见高度为不小于内容区域高度
+        mViewHeight = mTopViewHeight + mBackgroundHeight;
+    }
+
+    public void setContentView(int layoutId) {
+        View contentView = null;
+        try {
+            contentView = View.inflate(getContext(), layoutId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setContentView(contentView);
     }
 
     /**
-     * Sets header content view.
+     * Sets top view
      *
      * @param layoutId
      */
-    public void setContentView(int layoutId) {
-        if (0 == layoutId) {
-            return;
+    public void setTopView(int layoutId) {
+        View topView = null;
+        try {
+            topView = View.inflate(getContext(), layoutId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mViewContent.removeAllViews();
-        View.inflate(getContext(), layoutId, mViewContent);
+        setTopView(topView);
     }
 
-    public void setTopView(int layoutId) {
-        if (0 == layoutId) {
+    /**
+     * Sets top view
+     *
+     * @param topView
+     */
+    public void setTopView(View topView) {
+        if (null == topView) {
             return;
         }
+        ViewUtil.measureView(topView);
+        int topViewHeight = topView.getMeasuredHeight();
+        if (topViewHeight > mTopViewHeight) {
+            mTopViewHeight = topViewHeight;
+        }
         mTopContent.removeAllViews();
-        View.inflate(getContext(), layoutId, mTopContent);
-        ViewUtil.measureView(mViewContent);
-        mVisibleHeight = mViewContent.getMeasuredHeight();
-
+        mTopContent.addView(topView, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ViewUtil.measureView(this);
-        mViewHeight = this.getMeasuredHeight();
-
-        ViewUtil.measureView(mStateContent);
-        mStateViewHeight = mStateContent.getMeasuredHeight();
+        mViewHeight = mTopViewHeight + mBackgroundHeight;
     }
 
 
@@ -234,31 +248,43 @@ public class PullHeaderView2 extends LinearLayout {
      */
     private void initView(Context context) {
 
+        setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+
         View.inflate(context, R.layout.layout_pullview_header2, this);
 
         mTopContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_top);
         mBackgroundContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_bg_content);
         mViewContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_view_content);
         mStateContent = (LinearLayout) findViewById(R.id.ll_pull_listview_header_state_content);
-        mIvBg = (ImageView) findViewById(R.id.iv_pull_listview_header_bg);
+        mIvBackground = (ImageView) findViewById(R.id.iv_pull_listview_header_bg);
 
-        //这里进行对背景图片的ImageView进行宽度限制，是为了配合adjustViewBounds属性
-        ViewGroup.LayoutParams bgLayoutParams = mIvBg.getLayoutParams();
-        if (null == bgLayoutParams) {
-            bgLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-        bgLayoutParams.width = context.getResources().getDisplayMetrics().widthPixels;
-        mIvBg.setLayoutParams(bgLayoutParams);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        mBackgroundHeight = (3 * dm.widthPixels) / 4;
 
-        ViewUtil.measureView(mViewContent);
-        mVisibleHeight = mViewContent.getMeasuredHeight();
+        layoutBackgroundContent(mBackgroundHeight);
 
         ViewUtil.measureView(this);
         mViewHeight = this.getMeasuredHeight();
-
-        ViewUtil.measureView(mStateContent);
+        mTopViewHeight = mTopContent.getMeasuredHeight();
+        mContentViewHeight = mViewContent.getMeasuredHeight();
         mStateViewHeight = mStateContent.getMeasuredHeight();
-        mStateContent.setPadding(0, mViewHeight - mVisibleHeight - mStateViewHeight, 0, 0);
+        mVisibleHeight = mContentViewHeight > mVisibleHeight
+                ? mContentViewHeight : mVisibleHeight; //最小可见高度为不小于内容区域高度
+        mStateContent.setPadding(0, mViewHeight - mContentViewHeight - mStateViewHeight, 0, 0);
+    }
 
+    /**
+     * Layout background content.
+     *
+     * @param height
+     */
+    private void layoutBackgroundContent(int height) {
+        ViewGroup.LayoutParams bgContentParams = mBackgroundContent.getLayoutParams();
+        if (null == bgContentParams) {
+            bgContentParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        bgContentParams.height = height;
+        mBackgroundContent.setLayoutParams(bgContentParams);
     }
 }

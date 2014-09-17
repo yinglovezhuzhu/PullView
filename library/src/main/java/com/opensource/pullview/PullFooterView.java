@@ -36,19 +36,14 @@ import com.opensource.pullview.utils.ViewUtil;
  */
 public class PullFooterView extends LinearLayout {
 
-//	/** The header view. */
-//	private LinearLayout mHeaderView;
-
     /**
      * The arrow image view.
      */
     private ImageView mArrowImageView;
-
     /**
      * The header progress bar.
      */
     private ProgressBar mProgress;
-
     /**
      * The tips textview.
      */
@@ -57,7 +52,7 @@ public class PullFooterView extends LinearLayout {
     /**
      * The head content height.
      */
-    private int mFooterViewHeight;
+    int mViewHeight;
 
     /**
      * Instantiates a new ab list view header.
@@ -95,7 +90,7 @@ public class PullFooterView extends LinearLayout {
 
         //Get height of this header view.
         ViewUtil.measureView(this);
-        mFooterViewHeight = this.getMeasuredHeight();
+        mViewHeight = this.getMeasuredHeight();
     }
 
     /**
@@ -166,7 +161,7 @@ public class PullFooterView extends LinearLayout {
      * @return the header height
      */
     public int getViewHeight() {
-        return mFooterViewHeight;
+        return mViewHeight;
     }
 
     /**

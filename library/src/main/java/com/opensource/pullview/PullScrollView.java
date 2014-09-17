@@ -93,13 +93,13 @@ public class PullScrollView extends BasePullScrollView {
                                 if (scrollY > 0) {
                                     scrollTo(0, 0);
                                 }
-                                if (moveY > 0 && (scrollY < mHeaderViewHeight)) {
+                                if (moveY > 0 && (scrollY < mHeaderView.mViewHeight)) {
                                     mState = PULL_TO_LOAD;
                                 } else if (moveY <= 0) {
                                     // Slide to the top
                                     mState = IDEL;
                                 }
-                                updateHeaderViewByState(scrollY - mHeaderViewHeight);
+                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
                                 break;
                             case PULL_TO_LOAD:
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
@@ -108,17 +108,17 @@ public class PullScrollView extends BasePullScrollView {
                                 }
                                 if (moveY <= 0) {
                                     mState = IDEL;
-                                } else if (scrollY >= mHeaderViewHeight) {
+                                } else if (scrollY >= mHeaderView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
                                 }
-                                updateHeaderViewByState(scrollY - mHeaderViewHeight);
+                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
                                 break;
                             case IDEL:
                                 if (moveY > 0) {
                                     mState = PULL_TO_LOAD;
                                 }
-                                updateHeaderViewByState(-mHeaderViewHeight);
+                                updateHeaderViewByState(-mHeaderView.mViewHeight);
                                 break;
                             default:
                                 break;
@@ -135,7 +135,7 @@ public class PullScrollView extends BasePullScrollView {
                         case PULL_TO_LOAD:
                             //Pull to refresh.
                             mState = IDEL;
-                            updateHeaderViewByState(-mHeaderViewHeight);
+                            updateHeaderViewByState(-mHeaderView.mViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
                             if (mEnablePullRefresh) {
@@ -145,7 +145,7 @@ public class PullScrollView extends BasePullScrollView {
                                 updateHeaderViewByState(0);
                             } else {
                                 mState = IDEL;
-                                updateHeaderViewByState(-mHeaderViewHeight);
+                                updateHeaderViewByState(-mHeaderView.mViewHeight);
                             }
                             break;
                         default:
@@ -222,7 +222,9 @@ public class PullScrollView extends BasePullScrollView {
     @Override
     public void refreshCompleted() {
         super.refreshCompleted();
-        updateHeaderViewByState(-mHeaderViewHeight);
+        mRecording = false;
+        mIsBack = false;
+        updateHeaderViewByState(-mHeaderView.mViewHeight);
         mLastRefreshTime = DateUtil.getSystemDate("yyyy-MM-dd HH:mm:ss");
         mHeaderView.setLabelText(getResources().getText(R.string.pull_view_refresh_time) + " " + mLastRefreshTime);
     }
@@ -266,12 +268,11 @@ public class PullScrollView extends BasePullScrollView {
         mHeaderView = new PullHeaderView(context);
 
         // init header height
-        mHeaderViewHeight = mHeaderView.getViewHeight();
         mHeaderView.setGravity(Gravity.BOTTOM);
         addHeaderView(mHeaderView);
 
         mState = IDEL;
-        updateHeaderViewByState(-mHeaderViewHeight);
+        updateHeaderViewByState(-mHeaderView.mViewHeight);
 
         mLastRefreshTime = DateUtil.getSystemDate(getResources().getString(R.string.pull_view_date_format));
 

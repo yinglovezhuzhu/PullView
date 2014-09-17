@@ -27,50 +27,46 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      * The rotate down anim.
      */
     protected Animation mUpToDownAnimation;
-
     /**
      * The scroll layout.
      */
     protected LinearLayout mScrollLayout;
-
     /**
      * The content layout
      */
     protected LinearLayout mContentLayout;
-
-    protected LinearLayout mFootContent;
-
     /**
-     * The header view height.
+     * The foot content
      */
-    protected int mHeaderViewHeight;
-
+    protected LinearLayout mFootContent;
+    /**
+     * The height of foot content *
+     */
     protected int mFootContentHeight;
-
+    /**
+     * The top position of the scroll
+     */
     protected int mTopPosition;
-
+    /**
+     * The bottom position of the scroll
+     */
     protected int mBottomPosition;
-
     /**
      * Enable pull refresh.
      */
     protected boolean mEnablePullRefresh = false;
-
     /**
      * Enable over scroll
      */
     protected boolean mEnableOverScroll = true;
-
     /**
      * Pull refreshing.
      */
     protected boolean mRefreshing = false;
-
     /**
      * The listener on refresh data.
      */
     protected OnRefreshListener mOnRefreshListener = null;
-
     /**
      * The state of the PullView.
      */

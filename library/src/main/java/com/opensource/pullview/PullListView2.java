@@ -42,10 +42,8 @@ public class PullListView2 extends BasePullListView {
 
     private static final int DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE = 80;
 
-    private PullHeaderView2 mHeaderView;
 
-    private int mHeaderViewVisibleHeight;
-    private int mHeaderViewStateHeight;
+    private PullHeaderView2 mHeaderView;
 
     /**
      * The distance pull down to refresh *
@@ -85,7 +83,6 @@ public class PullListView2 extends BasePullListView {
 
     private int mStartY = 0;
     private boolean mRecording = false;
-    private boolean mIsBack = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -93,12 +90,12 @@ public class PullListView2 extends BasePullListView {
             case MotionEvent.ACTION_DOWN:
                 mStartY = (int) event.getY();
                 if (!mRecording) {
-                    mRecording = mFirstItemIndex == 0;
+                    mRecording = mVerticalScrollOffset == 0;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if (mFirstItemIndex == 0) {
+                if (mVerticalScrollOffset == 0) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
@@ -118,8 +115,7 @@ public class PullListView2 extends BasePullListView {
                                 // Slide to the top
                                 mState = IDEL;
                             }
-
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight + scrollY);
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             break;
                         case PULL_TO_LOAD:
                             setSelection(mFirstItemIndex);
@@ -128,20 +124,19 @@ public class PullListView2 extends BasePullListView {
                                 mState = IDEL;
                             } else if (scrollY >= mMinPullDownDist) {
                                 mState = RELEASE_TO_LOAD;
-                                mIsBack = true;
                             }
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight + scrollY);
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             break;
                         case LOADING:
                             if (moveY > 0) {
-                                updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight + scrollY);
+                                updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             }
                             break;
                         case IDEL:
                             if (moveY > 0) {
                                 mState = PULL_TO_LOAD;
                             }
-                            updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                             break;
                         default:
                             break;
@@ -149,7 +144,7 @@ public class PullListView2 extends BasePullListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mFirstItemIndex == 0) {
+                if (mVerticalScrollOffset == 0) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -172,10 +167,9 @@ public class PullListView2 extends BasePullListView {
                         default:
                             break;
                     }
-                    updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
+                    updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                 }
                 mRecording = false;
-                mIsBack = false;
                 break;
             default:
                 break;
@@ -198,8 +192,9 @@ public class PullListView2 extends BasePullListView {
     @Override
     public void refreshCompleted() {
         super.refreshCompleted();
+        mRecording = false;
         mHeaderView.setStateContentVisibility(View.VISIBLE);
-        updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
+        updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
     }
 
     @Override
@@ -214,7 +209,7 @@ public class PullListView2 extends BasePullListView {
      * @param resid
      */
     public void setHeaderBackgroundImage(int resid) {
-        mHeaderView.setBackgroundResource(resid);
+        mHeaderView.mIvBackground.setImageResource(resid);
     }
 
     /**
@@ -223,7 +218,7 @@ public class PullListView2 extends BasePullListView {
      * @param bm
      */
     public void setHeaderBackgroundImage(Bitmap bm) {
-        mHeaderView.setBackgroundImage(bm);
+        mHeaderView.mIvBackground.setImageBitmap(bm);
     }
 
     /**
@@ -232,7 +227,7 @@ public class PullListView2 extends BasePullListView {
      * @return
      */
     public ImageView getHeaderBackgroundImageView() {
-        return mHeaderView.getBackgroudImageView();
+        return mHeaderView.mIvBackground;
     }
 
     /**
@@ -244,17 +239,21 @@ public class PullListView2 extends BasePullListView {
      */
     public void setHeaderBackgroundView(View backgroundView) {
         mHeaderView.setBackgroundView(backgroundView);
+        if (IDEL == mState) {
+            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
+        }
     }
 
     /**
-     * Sets background view<br/><br/>
-     * <p/>
-     * If you use this method to set background view, it will replace default background ImageView.
+     * Sets header content view.
      *
      * @param layoutId
      */
     public void setHeaderBackgroundView(int layoutId) {
-        mHeaderView.setBackgroudView(layoutId);
+        mHeaderView.setBackgroundView(layoutId);
+        if (IDEL == mState) {
+            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
+        }
     }
 
     /**
@@ -264,6 +263,9 @@ public class PullListView2 extends BasePullListView {
      */
     public void setHeaderContentView(View contentView) {
         mHeaderView.setContentView(contentView);
+        if (IDEL == mState) {
+            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
+        }
     }
 
     /**
@@ -273,6 +275,27 @@ public class PullListView2 extends BasePullListView {
      */
     public void setHeaderContentView(int layoutId) {
         mHeaderView.setContentView(layoutId);
+        if (IDEL == mState) {
+            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
+        }
+    }
+
+    /**
+     * Sets header top view
+     *
+     * @param layoutId
+     */
+    public void setHeaderTopView(int layoutId) {
+        mHeaderView.setTopView(layoutId);
+    }
+
+    /**
+     * Sets header top view
+     *
+     * @param view
+     */
+    public void setHeaderTopView(View view) {
+        mHeaderView.setTopView(view);
     }
 
     /**
@@ -283,16 +306,13 @@ public class PullListView2 extends BasePullListView {
     private void initView(Context context) {
 
         mHeaderView = new PullHeaderView2(context);
-        mHeaderViewHeight = mHeaderView.getViewHeight();
-        mHeaderViewVisibleHeight = mHeaderView.getVisibleHeight();
-        mHeaderViewStateHeight = mHeaderView.getStateViewHeight();
-        mMinPullDownDist = mHeaderViewStateHeight > DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE
-                ? mHeaderViewStateHeight : DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE; //下拉刷新需要滑动的距离
+        mMinPullDownDist = mHeaderView.mStateViewHeight > DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE
+                ? mHeaderView.mStateViewHeight : DEFAULT_MIN_PULL_DOWN_REFRESH_DISTANCE; //下拉刷新需要滑动的距离
         mHeaderView.setStateContentVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
         addHeaderView(mHeaderView, null, false);
 
         mState = IDEL;
-        updateHeaderViewByState(mHeaderViewVisibleHeight - mHeaderViewHeight);
+        updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
     }
 
     private void updateHeaderViewByState(int paddingTop) {
@@ -301,13 +321,13 @@ public class PullListView2 extends BasePullListView {
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
                 break;
             case PULL_TO_LOAD:
-                mHeaderView.setStateContentPadding(0, mHeaderViewHeight - mHeaderViewVisibleHeight - mHeaderViewStateHeight, 0, 0);
+                mHeaderView.setStateContentPadding(0, mHeaderView.mViewHeight - mHeaderView.mVisibleHeight - mHeaderView.mStateViewHeight, 0, 0);
                 break;
             case LOADING:
                 mHeaderView.setStateContentPadding(0, -paddingTop, 0, 0);
                 break;
             case IDEL:
-                mHeaderView.setStateContentPadding(0, -paddingTop - mHeaderViewStateHeight, 0, 0);
+                mHeaderView.setStateContentPadding(0, -paddingTop - mHeaderView.mStateViewHeight, 0, 0);
                 break;
             default:
                 break;

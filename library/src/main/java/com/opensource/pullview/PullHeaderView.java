@@ -18,7 +18,6 @@
 package com.opensource.pullview;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -40,17 +39,14 @@ public class PullHeaderView extends LinearLayout {
      * The arrow image view.
      */
     private ImageView mArrowImageView;
-
     /**
      * The header progress bar.
      */
     private ProgressBar mProgress;
-
     /**
      * The tips textview.
      */
     private TextView mTvTitle;
-
     /**
      * The header time view.
      */
@@ -59,7 +55,7 @@ public class PullHeaderView extends LinearLayout {
     /**
      * The head content height.
      */
-    private int mHeaderViewHeight;
+    int mViewHeight;
 
     /**
      * Instantiates a new ab list view header.
@@ -80,26 +76,6 @@ public class PullHeaderView extends LinearLayout {
     public PullHeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
-    }
-
-    /**
-     * Inits the view.
-     *
-     * @param context the context
-     */
-    private void initView(Context context) {
-
-        View.inflate(context, R.layout.layout_pullview_header, this);
-
-        mArrowImageView = (ImageView) findViewById(R.id.iv_pullview_header_arrow);
-        mProgress = (ProgressBar) findViewById(R.id.pb_pullview_header_progress);
-        mTvTitle = (TextView) findViewById(R.id.tv_pullview_header_title);
-        mTvLabel = (TextView) findViewById(R.id.tv_pullview_header_label);
-
-        //Get height of this header view.
-        ViewUtil.measureView(this);
-        mHeaderViewHeight = this.getMeasuredHeight();
-
     }
 
     /**
@@ -201,15 +177,6 @@ public class PullHeaderView extends LinearLayout {
         mTvLabel.setText(time);
     }
 
-    /**
-     * Gets the header height.
-     *
-     * @return the header height
-     */
-    public int getViewHeight() {
-        return mHeaderViewHeight;
-    }
-
 
     /**
      * Set title text color
@@ -231,22 +198,22 @@ public class PullHeaderView extends LinearLayout {
     }
 
     /**
-     * Get progress
+     * Inits the view.
      *
-     * @return
-     * @throws
+     * @param context the context
      */
-    public ProgressBar getProgress() {
-        return mProgress;
-    }
+    private void initView(Context context) {
 
-    /**
-     * Set progress drawable
-     *
-     * @return
-     * @throws
-     */
-    public void setHeaderProgressBarDrawable(Drawable indeterminateDrawable) {
-        mProgress.setIndeterminateDrawable(indeterminateDrawable);
+        View.inflate(context, R.layout.layout_pullview_header, this);
+
+        mArrowImageView = (ImageView) findViewById(R.id.iv_pullview_header_arrow);
+        mProgress = (ProgressBar) findViewById(R.id.pb_pullview_header_progress);
+        mTvTitle = (TextView) findViewById(R.id.tv_pullview_header_title);
+        mTvLabel = (TextView) findViewById(R.id.tv_pullview_header_label);
+
+        //Get height of this header view.
+        ViewUtil.measureView(this);
+        mViewHeight = this.getMeasuredHeight();
+
     }
 }

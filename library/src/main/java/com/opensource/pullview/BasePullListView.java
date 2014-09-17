@@ -20,12 +20,12 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
 
     private PullFooterView mFooterView;
 
-    protected int mHeaderViewHeight;
-    protected int mFooterViewHeight;
-
     protected int mFirstItemIndex;
-    protected int mLastItemIndex;
     protected int mTotalItemCount;
+
+    protected int mVerticalScrollOffset = 0;
+    protected int mVerticalScrollExtent = 0;
+    protected int mVerticalScrollRange = 0;
 
     /**
      * Whether it can refresh.
@@ -85,8 +85,10 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mFirstItemIndex = firstVisibleItem;
-        mLastItemIndex = firstVisibleItem + visibleItemCount;
         mTotalItemCount = totalItemCount;
+        mVerticalScrollOffset = computeVerticalScrollOffset();
+        mVerticalScrollExtent = computeVerticalScrollExtent();
+        mVerticalScrollRange = computeVerticalScrollRange();
         if (null != mScrollListener) {
             mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
@@ -94,7 +96,9 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == SCROLL_STATE_IDLE && mLastItemIndex == mTotalItemCount && mState == IDEL) {
+        if (scrollState == SCROLL_STATE_IDLE
+                && mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent
+                && mState == IDEL) {
             if (mEnableLoad && mLoadMode == LoadMode.AUTO_LOAD) {
                 setSelection(mTotalItemCount);
                 loadMore();
@@ -117,12 +121,12 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
             case MotionEvent.ACTION_DOWN:
                 mStartY = (int) event.getY();
                 if (!mRecording) {
-                    mRecording = mLastItemIndex == mTotalItemCount;
+                    mRecording = mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if (mLastItemIndex == mTotalItemCount) {
+                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
@@ -143,29 +147,29 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                             case RELEASE_TO_LOAD: // release-to-load
                                 setSelection(mTotalItemCount);
                                 // Slide down, header part was covered, but not all be covered(Pull down to cancel)
-                                if (moveY > 0 && scrollY <= mFooterViewHeight) {
+                                if (moveY > 0 && scrollY <= mFooterView.mViewHeight) {
                                     mState = PULL_TO_LOAD;
                                 } else if (moveY <= 0) { //Slide up(Pull up to make footer to show)
                                     mState = IDEL;
                                 }
-                                updateFooterViewByState(scrollY - mFooterViewHeight);
+                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
                                 break;
                             case PULL_TO_LOAD:
                                 setSelection(mTotalItemCount);
                                 // Pull up to the state can enter RELEASE_TO_REFRESH
-                                if (scrollY > mFooterViewHeight) {
+                                if (scrollY > mFooterView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
                                 } else if (moveY <= 0) {
                                     mState = IDEL;
                                 }
-                                updateFooterViewByState(scrollY - mFooterViewHeight);
+                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
                                 break;
                             case IDEL:
                                 if (moveY > 0) {
                                     mState = PULL_TO_LOAD;
                                 }
-                                updateFooterViewByState(-mFooterViewHeight);
+                                updateFooterViewByState(-mFooterView.mViewHeight);
                                 break;
                             default:
                                 break;
@@ -174,7 +178,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mLastItemIndex == mTotalItemCount) {
+                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -182,7 +186,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                         case PULL_TO_LOAD:
                             //Pull to load more data.
                             mState = IDEL;
-                            updateFooterViewByState(-mFooterViewHeight);
+                            updateFooterViewByState(-mFooterView.mViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
                             if (mEnableLoad) {
@@ -192,7 +196,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                                 updateFooterViewByState(0);
                             } else {
                                 mState = IDEL;
-                                updateFooterViewByState(-mFooterViewHeight);
+                                updateFooterViewByState(-mFooterView.mViewHeight);
                             }
                             break;
                         default:
@@ -290,8 +294,10 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void loadMoreCompleted(boolean canLoadmore) {
         mState = IDEL;
+        mRefreshing = false;
+        mRecording = false;
         this.mEnableLoad = null != mLoadMoreListener && canLoadmore;
-        updateFooterViewByState(-mFooterViewHeight);
+        updateFooterViewByState(-mFooterView.mViewHeight);
     }
 
     /**
@@ -394,7 +400,6 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         mUpToDownAnimation.setFillAfter(true);
 
         mFooterView = new PullFooterView(context);
-        mFooterViewHeight = mFooterView.getViewHeight();
         addFooterView(mFooterView, null, true);
 
         super.setOnScrollListener(this);

@@ -34,30 +34,17 @@
             <ImageView
                 android:id="@+id/iv_pull_listview_header_bg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerInside"
-                android:adjustViewBounds="true"
-                android:src="@drawable/background_image"/>
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"/>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/ll_pull_listview_header_view_content"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="150sp"
-                    android:text="测试"
-                    android:gravity="center"
-                    android:textColor="#FF000000"/>
-            </LinearLayout>
+            android:layout_gravity="bottom"
+            android:gravity="bottom">
         </LinearLayout>
     </FrameLayout>
     <LinearLayout
@@ -70,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
-            android:indeterminate="false" />
+            android:indeterminate="false"
+            android:visibility="invisible"/>
     </LinearLayout>
 </RelativeLayout>
