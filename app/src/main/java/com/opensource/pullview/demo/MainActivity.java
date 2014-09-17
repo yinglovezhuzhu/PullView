@@ -52,9 +52,6 @@ public class MainActivity extends ListActivity {
                     case 2:
                         intent.setClass(MainActivity.this, PullListView2Activity.class);
                         break;
-                    case 3:
-                        intent.setClass(MainActivity.this, PullGridViewActivity.class);
-                        break;
                     default:
                         break;
                 }

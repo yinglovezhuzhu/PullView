@@ -22,7 +22,6 @@
         <item>PullScrollView</item>
         <item>PullListview</item>
         <item>PullListview2</item>
-        <item>PullGridView</item>
     </string-array>
     
 </resources>

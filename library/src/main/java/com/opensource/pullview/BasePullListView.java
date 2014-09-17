@@ -52,7 +52,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     /**
      * Whether it can load more data.
      */
-    protected boolean mEnableLoad = false;
+    protected boolean mEnableLoadMore = false;
     /**
      * Is refreshing data
      */
@@ -117,7 +117,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         if (scrollState == SCROLL_STATE_IDLE
                 && mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent
                 && mState == IDEL) {
-            if (mEnableLoad && mLoadMode == LoadMode.AUTO_LOAD) {
+            if (mEnableLoadMore && mLoadMode == LoadMode.AUTO_LOAD) {
                 setSelection(mTotalItemCount);
                 loadMore();
                 mState = LOADING;
@@ -152,8 +152,8 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                     int moveY = mStartY - tempY;
                     int scrollY = moveY / OFFSET_RATIO;
                     if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoad || mEnableOverScroll)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoad && mEnableOverScroll)) {
+                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoadMore || mEnableOverScroll)
+                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoadMore && mEnableOverScroll)) {
                         //可以向上pull的条件是
                         //1.mState != LOADING，即非LOADING状态下
                         //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
@@ -207,7 +207,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                             updateFooterViewByState(-mFooterView.mViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
-                            if (mEnableLoad) {
+                            if (mEnableLoadMore) {
                                 //Release to load more data.
                                 loadMore();
                                 mState = LOADING;
@@ -294,7 +294,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
             default:
                 break;
         }
-        mFooterView.setVisibility(mEnableLoad ? View.VISIBLE : View.INVISIBLE);
+        mFooterView.setVisibility(mEnableLoadMore ? View.VISIBLE : View.INVISIBLE);
         mFooterView.setPadding(0, 0, 0, paddingBottom);
     }
 
@@ -314,7 +314,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         mState = IDEL;
         mRefreshing = false;
         mRecording = false;
-        this.mEnableLoad = null != mLoadMoreListener && canLoadmore;
+        this.mEnableLoadMore = null != mLoadMoreListener && canLoadmore;
         updateFooterViewByState(-mFooterView.mViewHeight);
     }
 
@@ -369,7 +369,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public void setOnLoadMoreListener(OnLoadMoreListener listener) {
         this.mLoadMoreListener = listener;
-        mEnableLoad = null != listener;
+        mEnableLoadMore = null != listener;
     }
 
     /**
