@@ -10,4 +10,5 @@ PullView v1.1.0,包含PullScrollView，PullListView和PullListView2三个自定�
    头部默认是显示出一部分的，这个跟QQ的空间动态和微信的朋友圈类似。<br/>
 
 <br/><br/>
+---------------------------------------------------------------------------<br/>
 说明：目前还没有找到更好的方案实现GridView的Pull操作，但是个人建议可以使用ListView来实现，在Adapter中做一些操作即可。
