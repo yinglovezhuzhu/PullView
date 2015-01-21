@@ -419,6 +419,8 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
 
         mFooterView = new PullFooterView(context);
         addFooterView(mFooterView, null, true);
+        
+        loadMoreCompleted(mEnableLoadMore);
 
         super.setOnScrollListener(this);
     }
