@@ -17,6 +17,7 @@
  */
 package com.opensource.pullview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -77,10 +78,13 @@ public class PullListView extends BasePullListView {
 
 
     private int mStartY = 0;
+    private int mScrollY = 0;
     private boolean mRecording = false;
     private boolean mIsBack = false;
+    
 
-    @Override
+    @SuppressLint("ClickableViewAccessibility")
+	@Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -97,7 +101,7 @@ public class PullListView extends BasePullListView {
                         mStartY = tempY;
                     }
                     int moveY = tempY - mStartY;
-                    int scrollY = moveY / OFFSET_RATIO;
+                    mScrollY = moveY / OFFSET_RATIO;
 
                     if (mState != LOADING) {
                         // Ensure that the process of setting padding, current position has always been at the header,
@@ -106,24 +110,24 @@ public class PullListView extends BasePullListView {
                             case RELEASE_TO_LOAD: // Release to load data
                                 setSelection(mFirstItemIndex);
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
-                                if (moveY > 0 && (scrollY < mHeaderView.mViewHeight)) {
+                                if (moveY > 0 && (mScrollY < mHeaderView.mViewHeight)) {
                                     mState = PULL_TO_LOAD;
                                 } else if (moveY <= 0) {
                                     // Slide to the top
                                     mState = IDEL;
                                 }
-                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
+                                updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
                                 break;
                             case PULL_TO_LOAD:
                                 setSelection(mFirstItemIndex);
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
                                 if (moveY <= 0) {
                                     mState = IDEL;
-                                } else if (scrollY >= mHeaderView.mViewHeight) {
+                                } else if (mScrollY >= mHeaderView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
                                 }
-                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
+                                updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
                                 break;
                             case IDEL:
                                 if (moveY > 0) {
@@ -138,7 +142,7 @@ public class PullListView extends BasePullListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mVerticalScrollOffset == 0) {
+                if (mVerticalScrollOffset <= 0 || mScrollY > 0) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -270,7 +274,7 @@ public class PullListView extends BasePullListView {
                 mHeaderView.startArrowAnimation(mDownToUpAnimation);
                 mHeaderView.setTitleText(R.string.pull_view_release_to_refresh);
                 mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
-                        + mLastRefreshTime);
+                        + " " + mLastRefreshTime);
                 break;
             case PULL_TO_LOAD:
                 mHeaderView.setArrowVisibility(View.VISIBLE);
@@ -281,9 +285,8 @@ public class PullListView extends BasePullListView {
                     mHeaderView.startArrowAnimation(mUpToDownAnimation);
                 }
                 mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
-                mHeaderView.setLabelText(getResources().getString(
-                        R.string.pull_view_refresh_time)
-                        + mLastRefreshTime);
+                mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
+                		+ " " + mLastRefreshTime);
                 break;
             case LOADING:
                 mHeaderView.setArrowVisibility(View.GONE);
@@ -291,14 +294,14 @@ public class PullListView extends BasePullListView {
                 mHeaderView.startArrowAnimation(null);
                 mHeaderView.setTitleText(R.string.pull_view_refreshing);
                 mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
-                        + mLastRefreshTime);
+                		+ " " + mLastRefreshTime);
                 break;
             case IDEL:
                 mHeaderView.setProgressVisibility(View.GONE);
                 mHeaderView.startArrowAnimation(null);
                 mHeaderView.setTitleText(R.string.pull_view_pull_to_refresh);
                 mHeaderView.setLabelText(getResources().getString(R.string.pull_view_refresh_time)
-                        + mLastRefreshTime);
+                		+ " " + mLastRefreshTime);
                 break;
             default:
                 break;
