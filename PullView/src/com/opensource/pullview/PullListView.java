@@ -164,7 +164,6 @@ public class PullListView extends BasePullListView {
                             }
                             break;
                         default:
-                            updateHeaderViewByState(-mHeaderView.mViewHeight);
                             break;
                     }
                 } 
