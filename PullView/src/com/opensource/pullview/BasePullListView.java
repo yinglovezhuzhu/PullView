@@ -39,6 +39,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     private PullFooterView mFooterView;
 
     protected int mFirstItemIndex;
+    protected int mVisableItemCount;
     protected int mTotalItemCount;
 
     protected int mVerticalScrollOffset = 0;
@@ -103,10 +104,13 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mFirstItemIndex = firstVisibleItem;
+        mVisableItemCount = visibleItemCount;
         mTotalItemCount = totalItemCount;
         mVerticalScrollOffset = computeVerticalScrollOffset();
         mVerticalScrollExtent = computeVerticalScrollExtent();
         mVerticalScrollRange = computeVerticalScrollRange();
+        
+        System.out.println(mVerticalScrollOffset + "<>" + mVerticalScrollExtent + "<>" + mVerticalScrollRange);
         if (null != mScrollListener) {
             mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
@@ -167,7 +171,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                                 // Slide down, header part was covered, but not all be covered(Pull down to cancel)
                                 if (moveY > 0 && scrollY <= mFooterView.mViewHeight) {
                                     mState = PULL_TO_LOAD;
-                                } else if (moveY <= 0) { //Slide up(Pull up to make footer to show)
+                                } else if (moveY <= 0 && mFirstItemIndex > 0) { //Slide up(Pull up to make footer to show)
                                     mState = IDEL;
                                 }
                                 updateFooterViewByState(scrollY - mFooterView.mViewHeight);
@@ -178,13 +182,13 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                                 if (scrollY > mFooterView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
-                                } else if (moveY <= 0) {
+                                } else if (moveY <= 0 && mFirstItemIndex > 0) {
                                     mState = IDEL;
                                 }
                                 updateFooterViewByState(scrollY - mFooterView.mViewHeight);
                                 break;
                             case IDEL:
-                                if (moveY > 0) {
+                                if (moveY > 0 && mFirstItemIndex > 0) {
                                     mState = PULL_TO_LOAD;
                                 }
                                 updateFooterViewByState(-mFooterView.mViewHeight);
@@ -196,7 +200,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent) {
+                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent || mTotalItemCount == mFirstItemIndex + mVisableItemCount) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -420,7 +424,11 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         mFooterView = new PullFooterView(context);
         addFooterView(mFooterView, null, true);
         
-        loadMoreCompleted(mEnableLoadMore);
+        mState = IDEL;
+        mRefreshing = false;
+        mRecording = false;
+        mEnableLoadMore = null != mLoadMoreListener && mEnableLoadMore;
+        updateFooterViewByState(-mFooterView.mViewHeight);
 
         super.setOnScrollListener(this);
     }

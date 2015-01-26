@@ -75,7 +75,7 @@ public class PullListViewActivity extends Activity {
                 case MSG_LOAD_DONE:
                     if(null != mListView) {
                         if(null != mAdapter) {
-                            for(int i = 0; i < 30; i++) {
+                            for(int i = 0; i < 3; i++) {
                                 mDatas.add("Item " + mDatas.size());
                             }
                             mAdapter.notifyDataSetChanged();

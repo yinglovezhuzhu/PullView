@@ -114,7 +114,7 @@ public class PullListView2 extends BasePullListView {
                             // Slide up, header part was covered, but not all be covered(Pull up to cancel)
                             if (moveY > 0 && (mScrollY < mMinPullDownDist)) {
                                 mState = PULL_TO_LOAD;
-                            } else if (moveY <= 0) {
+                            } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                 // Slide to the top
                                 mState = IDEL;
                             }
@@ -123,20 +123,20 @@ public class PullListView2 extends BasePullListView {
                         case PULL_TO_LOAD:
                             setSelection(mFirstItemIndex);
                             // Pull down to the state can enter RELEASE_TO_REFRESH
-                            if (moveY <= 0) {
-                                mState = IDEL;
-                            } else if (mScrollY >= mMinPullDownDist) {
+                            if (mScrollY >= mMinPullDownDist) {
                                 mState = RELEASE_TO_LOAD;
+                            } else if (moveY <= 0 && mFirstItemIndex == 0) {
+                                mState = IDEL;
                             }
                             updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
                             break;
                         case LOADING:
-                            if (moveY > 0) {
+                            if (moveY > 0 && mFirstItemIndex == 0) {
                                 updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
                             }
                             break;
                         case IDEL:
-                            if (moveY > 0) {
+                            if (moveY > 0 && mFirstItemIndex == 0) {
                                 mState = PULL_TO_LOAD;
                             }
                             updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
@@ -147,7 +147,7 @@ public class PullListView2 extends BasePullListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mVerticalScrollOffset <= 0 || mScrollY > 0) {
+                if (mVerticalScrollOffset <= 0 || mFirstItemIndex == 0) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -155,6 +155,7 @@ public class PullListView2 extends BasePullListView {
                         case PULL_TO_LOAD:
                             //Pull to refresh.
                             mState = IDEL;
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                             break;
                         case RELEASE_TO_LOAD:
                             if (mEnablePullRefresh) {
@@ -164,13 +165,14 @@ public class PullListView2 extends BasePullListView {
                             } else {
                                 mState = IDEL;
                             }
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                             break;
                         case LOADING:
+                        	updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                             break;
                         default:
                             break;
                     }
-                    updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight);
                 }
                 mRecording = false;
                 break;

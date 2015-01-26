@@ -95,7 +95,7 @@ public class PullListView extends BasePullListView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if (mVerticalScrollOffset == 0) {
+                if (mVerticalScrollOffset <= 0) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
@@ -112,7 +112,7 @@ public class PullListView extends BasePullListView {
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
                                 if (moveY > 0 && (mScrollY < mHeaderView.mViewHeight)) {
                                     mState = PULL_TO_LOAD;
-                                } else if (moveY <= 0) {
+                                } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                     // Slide to the top
                                     mState = IDEL;
                                 }
@@ -121,16 +121,16 @@ public class PullListView extends BasePullListView {
                             case PULL_TO_LOAD:
                                 setSelection(mFirstItemIndex);
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
-                                if (moveY <= 0) {
-                                    mState = IDEL;
-                                } else if (mScrollY >= mHeaderView.mViewHeight) {
+                                if (mScrollY >= mHeaderView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
+                                } else if (moveY <= 0 && mFirstItemIndex == 0) {
+                                    mState = IDEL;
                                 }
                                 updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
                                 break;
                             case IDEL:
-                                if (moveY > 0) {
+                                if (moveY > 0 && mFirstItemIndex == 0) {
                                     mState = PULL_TO_LOAD;
                                 }
                                 updateHeaderViewByState(-mHeaderView.mViewHeight);
@@ -142,7 +142,7 @@ public class PullListView extends BasePullListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mVerticalScrollOffset <= 0 || mScrollY > 0) {
+                if (mVerticalScrollOffset <= 0 || mFirstItemIndex == 0) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -167,7 +167,7 @@ public class PullListView extends BasePullListView {
                             updateHeaderViewByState(-mHeaderView.mViewHeight);
                             break;
                     }
-                }
+                } 
                 mRecording = false;
                 mIsBack = false;
                 break;
