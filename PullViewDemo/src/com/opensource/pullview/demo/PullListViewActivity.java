@@ -25,10 +25,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
+import com.opensource.pullview.OnLoadMoreListener;
+import com.opensource.pullview.OnRefreshListener;
+import com.opensource.pullview.PullListView;
+import com.opensource.pullview.utils.DateUtil;
 
 /**
  * Usage 
