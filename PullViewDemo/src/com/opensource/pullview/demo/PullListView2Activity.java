@@ -25,30 +25,25 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
-
-import com.opensource.pullview.OnLoadMoreListener;
-import com.opensource.pullview.OnRefreshListener;
-import com.opensource.pullview.PullListView;
-import com.opensource.pullview.R;
-import com.opensource.pullview.utils.DateUtil;
 
 /**
  * Usage 
  * 
  * @author yinglovezhuzhu@gmail.com
  */
-public class PullListViewActivity extends Activity {
+public class PullListView2Activity extends Activity {
 	
 	private static final String TAG = "PullListViewActivity";
 
     private static final int MSG_REFLESH_DONE = 0x100;
-	private static final int MSG_LOAD_DONE = 0x101;
+    private static final int MSG_REFLESH_ERROR = 0x101;
+	private static final int MSG_LOAD_DONE = 0x102;
 
 
-	private PullListView mListView;
+	private PullListView2 mListView;
 	private MainHandler mHandler = new MainHandler();
 	private ArrayAdapter<String> mAdapter;
 	private List<String> mDatas = new ArrayList<String>();
@@ -68,20 +63,24 @@ public class PullListViewActivity extends Activity {
                             mAdapter.notifyDataSetChanged();
                         }
                         mListView.refreshCompleted();
-                        mListView.loadMoreCompleted(mDatas.size() < 50);
+                        boolean loadMoreable = mDatas.size() < 50;
+                        mListView.loadMoreCompleted(loadMoreable);
                         Log.e(TAG, "Refresh finished +=====================^_^");
                     }
+                    break;
+                case MSG_REFLESH_ERROR:
                     break;
                 case MSG_LOAD_DONE:
                     if(null != mListView) {
                         if(null != mAdapter) {
-                            for(int i = 0; i < 3; i++) {
+                            for(int i = 0; i < 30; i++) {
                                 mDatas.add("Item " + mDatas.size());
                             }
                             mAdapter.notifyDataSetChanged();
                         }
                         mListView.refreshCompleted();
-                        mListView.loadMoreCompleted(mDatas.size() < 50);
+                        boolean loadMoreable = mDatas.size() < 50;
+                        mListView.loadMoreCompleted(loadMoreable);
                         Log.e(TAG, "Load more finished +=====================^_^");
                     }
                     break;
@@ -96,28 +95,32 @@ public class PullListViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_pull_listview);
+		setContentView(R.layout.activity_pull_listview2);
 		
-		mListView = (PullListView) findViewById(R.id.pull_list_view);
-		mListView.setLoadMode(PullListView.LoadMode.PULL_TO_LOAD);
-		mListView.setHeaderLabelVisibility(View.VISIBLE);
-		mListView.setLastRefreshTime(DateUtil.getYesterdayDate(getString(R.string.pull_view_date_format)));
-		
-//		ImageView iv = new ImageView(this);
-//		iv.setImageResource(com.opensource.pullview.R.drawable.ic_launcher);
-//		mListView.addHeaderView(iv, null, false);
-//		ImageView iv2 = new ImageView(this);
-//		iv2.setImageResource(com.opensource.pullview.R.drawable.ic_launcher);
-//		mListView.addHeaderView(iv2);
-//		ImageView iv3 = new ImageView(this);
-//		iv3.setImageResource(com.opensource.pullview.R.drawable.ic_launcher);
-//		mListView.addHeaderView(iv3);
-		
+		mListView = (PullListView2) findViewById(R.id.pull_list_view2);
+		mListView.setLoadMode(PullListView2.LoadMode.PULL_TO_LOAD);
+//		mListView.setLoadMode(PullListView2.LoadMode.AUTO_LOAD);
+        mListView.setEnableOverScroll(true);
+
+        mListView.setHeaderBackgroundImage(R.drawable.background_image);
+
+//        View view = View.inflate(this, R.layout.layout_header_content, null);
+////        mListView.setHeaderContentView(view);
+//        mListView.setHeaderBackgroundView(view);
+
+//        mListView.setHeaderBackgroundView(R.layout.layout_background_view);
+//        View view = View.inflate(this, R.layout.layout_header_content, null);
+//        mListView.setHeaderContentView(R.layout.layout_header_content);
+
+        mListView.setHeaderContentView(R.layout.layout_header_content);
+
+        mListView.setHeaderTopView(R.layout.layout_header_top);
+
+
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
 
-        mListView.setEnableOverScroll(true);
-		
+
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
@@ -126,7 +129,7 @@ public class PullListViewActivity extends Activity {
 				Log.e(TAG, "Start refresh+=====================^_^");
 			}
         });
-		
+
 		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
 
 			@Override
@@ -134,9 +137,9 @@ public class PullListViewActivity extends Activity {
 				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
 				Log.e(TAG, "Start load more+=====================^_^");
 			}
-        });
+		});
 		
 		mListView.onFootLoading("正在加载");
-		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
+		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 1000);
 	}
 }

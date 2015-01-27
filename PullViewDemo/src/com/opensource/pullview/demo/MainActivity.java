@@ -26,8 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.opensource.pullview.R;
-
 
 public class MainActivity extends ListActivity {
 
