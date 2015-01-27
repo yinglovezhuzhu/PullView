@@ -110,7 +110,13 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         mVerticalScrollExtent = computeVerticalScrollExtent();
         mVerticalScrollRange = computeVerticalScrollRange();
         
-        System.out.println(mVerticalScrollOffset + "<>" + mVerticalScrollExtent + "<>" + mVerticalScrollRange);
+        System.out.println("mVerticalScrollOffset = " + mVerticalScrollOffset 
+        		+ "<>" + "mVerticalScrollExtent = " + mVerticalScrollExtent 
+        		+ "<>" + "mVerticalScrollRange = " + mVerticalScrollRange);
+        
+        System.out.println("firstVisibleItem = " + firstVisibleItem 
+        		+ "<>visibleItemCount = " + visibleItemCount 
+        		+ "<>totalItemCount = " + totalItemCount);
         if (null != mScrollListener) {
             mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         }
@@ -147,60 +153,117 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
+//                int tempY = (int) event.getY();
+//                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent) {
+//                    if (!mRecording) {
+//                        mRecording = true;
+//                        mStartY = tempY;
+//                    }
+//                    int moveY = mStartY - tempY;
+//                    int scrollY = moveY / OFFSET_RATIO;
+//                    if (mState != LOADING
+//                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoadMore || mEnableOverScroll)
+//                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoadMore && mEnableOverScroll)) {
+//                        //可以向上pull的条件是
+//                        //1.mState != LOADING，即非LOADING状态下
+//                        //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
+//                        // 或者mLoadMode == LoadMode.AUTO_LOAD时没有更多数据可加载但可以过度滑动（OverScroll）
+//
+//                        // Ensure that the process of setting padding, current position has always been at the footer,
+//                        // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
+//                        switch (mState) {
+//                            case RELEASE_TO_LOAD: // release-to-load
+////                                setSelection(mTotalItemCount);
+//                                // Slide down, header part was covered, but not all be covered(Pull down to cancel)
+//                                if (moveY > 0 && scrollY <= mFooterView.mViewHeight) {
+//                                    mState = PULL_TO_LOAD;
+//                                } else if (moveY <= 0 && mFirstItemIndex > 0) { //Slide up(Pull up to make footer to show)
+//                                    mState = IDEL;
+//                                }
+//                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
+//                                break;
+//                            case PULL_TO_LOAD:
+////                                setSelection(mTotalItemCount);
+//                                // Pull up to the state can enter RELEASE_TO_REFRESH
+//                                if (scrollY > mFooterView.mViewHeight) {
+//                                    mState = RELEASE_TO_LOAD;
+//                                    mIsBack = true;
+//                                } else if (moveY <= 0 && mFirstItemIndex > 0) {
+//                                    mState = IDEL;
+//                                }
+//                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
+//                                break;
+//                            case IDEL:
+//                                if (moveY > 0 && mFirstItemIndex > 0) {
+//                                    mState = PULL_TO_LOAD;
+//                                }
+//                                updateFooterViewByState(-mFooterView.mViewHeight);
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                    }
+//                }
                 int tempY = (int) event.getY();
-                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent) {
-                    if (!mRecording) {
-                        mRecording = true;
-                        mStartY = tempY;
-                    }
-                    int moveY = mStartY - tempY;
-                    int scrollY = moveY / OFFSET_RATIO;
-                    if (mState != LOADING
-                            && (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoadMore || mEnableOverScroll)
-                            || mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoadMore && mEnableOverScroll)) {
-                        //可以向上pull的条件是
-                        //1.mState != LOADING，即非LOADING状态下
-                        //2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
-                        // 或者mLoadMode == LoadMode.AUTO_LOAD时没有更多数据可加载但可以过度滑动（OverScroll）
-
-                        // Ensure that the process of setting padding, current position has always been at the footer,
-                        // or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
-                        switch (mState) {
-                            case RELEASE_TO_LOAD: // release-to-load
-                                setSelection(mTotalItemCount);
-                                // Slide down, header part was covered, but not all be covered(Pull down to cancel)
-                                if (moveY > 0 && scrollY <= mFooterView.mViewHeight) {
-                                    mState = PULL_TO_LOAD;
-                                } else if (moveY <= 0 && mFirstItemIndex > 0) { //Slide up(Pull up to make footer to show)
-                                    mState = IDEL;
-                                }
-                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
-                                break;
-                            case PULL_TO_LOAD:
-                                setSelection(mTotalItemCount);
-                                // Pull up to the state can enter RELEASE_TO_REFRESH
-                                if (scrollY > mFooterView.mViewHeight) {
-                                    mState = RELEASE_TO_LOAD;
-                                    mIsBack = true;
-                                } else if (moveY <= 0 && mFirstItemIndex > 0) {
-                                    mState = IDEL;
-                                }
-                                updateFooterViewByState(scrollY - mFooterView.mViewHeight);
-                                break;
-                            case IDEL:
-                                if (moveY > 0 && mFirstItemIndex > 0) {
-                                    mState = PULL_TO_LOAD;
-                                }
-                                updateFooterViewByState(-mFooterView.mViewHeight);
-                                break;
-                            default:
-                                break;
-                        }
+                if (mVerticalScrollRange > mVerticalScrollExtent && mFirstItemIndex + mVisableItemCount == mTotalItemCount) {
+                	if (!mRecording) {
+                		mRecording = true;
+                		mStartY = tempY;
+                	}
+                	int moveY = tempY - mStartY;
+                	int scrollY = Math.abs(moveY) / OFFSET_RATIO;
+                	if (mState != LOADING
+                			&& (mLoadMode == LoadMode.PULL_TO_LOAD && (mEnableLoadMore || mEnableOverScroll)
+                			|| mLoadMode == LoadMode.AUTO_LOAD && !mEnableLoadMore && mEnableOverScroll)) {
+                		//可以向上pull的条件是
+                		//1.mState != LOADING，即非LOADING状态下
+                		//2.mLoadMode == LoadMode.PULL_TO_LOAD时有更多数据可加载或者可以过度滑动（OverScroll）
+                		// 或者mLoadMode == LoadMode.AUTO_LOAD时没有更多数据可加载但可以过度滑动（OverScroll）
+                		
+                		// Ensure that the process of setting padding, current position has always been at the footer,
+                		// or if when the list exceeds the screen, then, when the push up, the list will scroll at the same time
+                		switch (mState) {
+                		case RELEASE_TO_LOAD: // release-to-load
+                			if(mFirstItemIndex > 0) {
+                				setSelection(mTotalItemCount);
+                			}
+                			// Slide down, header part was covered, but not all be covered(Pull down to cancel)
+                			if (moveY < 0 && scrollY <= mFooterView.mViewHeight) {
+                				mState = PULL_TO_LOAD;
+                			} else if (moveY >= 0 && mFirstItemIndex > 0) { //Slide up(Pull up to make footer to show)
+                				mState = IDEL;
+                			}
+                			updateFooterViewByState(scrollY - mFooterView.mViewHeight);
+                			break;
+                		case PULL_TO_LOAD:
+                			if(mFirstItemIndex > 0) {
+                				setSelection(mTotalItemCount);
+                			}
+                			// Pull up to the state can enter RELEASE_TO_REFRESH
+                			if (scrollY > mFooterView.mViewHeight) {
+                				mState = RELEASE_TO_LOAD;
+                				mIsBack = true;
+                			} else if (moveY >= 0) {
+                				mState = IDEL;
+                			}
+                			updateFooterViewByState(scrollY - mFooterView.mViewHeight);
+                			break;
+                		case IDEL:
+                			if (moveY < 0) {
+                				mState = PULL_TO_LOAD;
+                			}
+                			updateFooterViewByState(-mFooterView.mViewHeight);
+                			break;
+                		default:
+                			break;
+                		}
                     }
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent || mTotalItemCount == mFirstItemIndex + mVisableItemCount) {
+//                if (mVerticalScrollRange == mVerticalScrollOffset + mVerticalScrollExtent 
+//                	|| mFirstItemIndex + mVisableItemCount >= mTotalItemCount) {
+                if (mFirstItemIndex + mVisableItemCount >= mTotalItemCount) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.

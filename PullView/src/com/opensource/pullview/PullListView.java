@@ -95,12 +95,12 @@ public class PullListView extends BasePullListView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if (mVerticalScrollOffset <= 0) {
+                int moveY = tempY - mStartY;
+                if (mVerticalScrollOffset <= 0 || mFirstItemIndex == 0) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
                     }
-                    int moveY = tempY - mStartY;
                     mScrollY = moveY / OFFSET_RATIO;
 
                     if (mState != LOADING) {
@@ -108,7 +108,9 @@ public class PullListView extends BasePullListView {
                         // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
                         switch (mState) {
                             case RELEASE_TO_LOAD: // Release to load data
-                                setSelection(mFirstItemIndex);
+                            	if(mFirstItemIndex + mVisableItemCount < mTotalItemCount) {
+                            		setSelection(mFirstItemIndex);
+                            	}
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
                                 if (moveY > 0 && (mScrollY < mHeaderView.mViewHeight)) {
                                     mState = PULL_TO_LOAD;
@@ -119,7 +121,9 @@ public class PullListView extends BasePullListView {
                                 updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
                                 break;
                             case PULL_TO_LOAD:
-                                setSelection(mFirstItemIndex);
+                            	if(mFirstItemIndex + mVisableItemCount < mTotalItemCount) {
+                            		setSelection(mFirstItemIndex);
+                            	}
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
                                 if (mScrollY >= mHeaderView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;

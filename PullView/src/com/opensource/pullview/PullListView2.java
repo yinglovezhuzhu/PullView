@@ -98,7 +98,7 @@ public class PullListView2 extends BasePullListView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 int tempY = (int) event.getY();
-                if (mVerticalScrollOffset <= 0) {
+                if (mVerticalScrollOffset <= 0 || mFirstItemIndex == 0) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
@@ -110,7 +110,9 @@ public class PullListView2 extends BasePullListView {
                     // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
                     switch (mState) {
                         case RELEASE_TO_LOAD: // Release to load data
-                            setSelection(mFirstItemIndex);
+                        	if(mFirstItemIndex + mVisableItemCount < mTotalItemCount) {
+                        		setSelection(mFirstItemIndex);
+                        	}
                             // Slide up, header part was covered, but not all be covered(Pull up to cancel)
                             if (moveY > 0 && (mScrollY < mMinPullDownDist)) {
                                 mState = PULL_TO_LOAD;
@@ -121,7 +123,9 @@ public class PullListView2 extends BasePullListView {
                             updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
                             break;
                         case PULL_TO_LOAD:
-                            setSelection(mFirstItemIndex);
+                        	if(mFirstItemIndex + mVisableItemCount < mTotalItemCount) {
+                        		setSelection(mFirstItemIndex);
+                        	}
                             // Pull down to the state can enter RELEASE_TO_REFRESH
                             if (mScrollY >= mMinPullDownDist) {
                                 mState = RELEASE_TO_LOAD;
