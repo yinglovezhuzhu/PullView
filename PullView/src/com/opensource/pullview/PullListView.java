@@ -103,7 +103,7 @@ public class PullListView extends BasePullListView {
                     }
                     mScrollY = moveY / OFFSET_RATIO;
 
-                    if (mState != LOADING) {
+                    if (mState != LOADING && (mEnablePullRefresh || mEnableOverScroll)) {
                         // Ensure that the process of setting padding, current position has always been at the header,
                         // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
                         switch (mState) {
