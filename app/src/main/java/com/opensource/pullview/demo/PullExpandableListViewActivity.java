@@ -20,7 +20,6 @@ import com.opensource.pullview.OnLoadMoreListener;
 import com.opensource.pullview.OnRefreshListener;
 import com.opensource.pullview.PullExpandableListView;
 
-import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class PullExpandableListViewActivity extends Activity {
                     if(null != mPullExpandableListView) {
                         if(null != mAdapter) {
                             mAdapter.clear();
-                            mAdapter.initData(0);
+                            mAdapter.addData(0);
                             mAdapter.notifyDataSetChanged();
                         }
                         mPullExpandableListView.refreshCompleted();
@@ -61,7 +60,7 @@ public class PullExpandableListViewActivity extends Activity {
                 case MSG_LOAD_DONE:
                     if(null != mPullExpandableListView) {
                         if(null != mAdapter) {
-                            mAdapter.initData(mAdapter.getGroupCount());
+                            mAdapter.addData(mAdapter.getGroupCount());
                             mAdapter.notifyDataSetChanged();
                         }
                         mPullExpandableListView.refreshCompleted();
@@ -141,10 +140,9 @@ public class PullExpandableListViewActivity extends Activity {
 
         public ExAdapter(Context context) {
             this.mmContext = context;
-//            initData(0);
         }
 
-        public void initData(int start) {
+        public void addData(int start) {
             for(int i = start; i < start + 20; i++) {
                 mmGroupData.add("Group--" + i);
                 ArrayList<String> childs = new ArrayList<>();
