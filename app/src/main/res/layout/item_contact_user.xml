@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+    <ImageView
+        android:id="@+id/iv_contact_user_avatar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_launcher"/>
+    <TextView
+        android:id="@+id/tv_contact_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:textSize="18sp"
+        android:text="死亡流星 ♂"/>
+    <TextView
+        android:id="@+id/tv_contact_user_honor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="14sp"
+        android:gravity="center_vertical"
+        android:text="国王陛下 ☆☆☆☆☆"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="50dp"
+        android:minHeight="40dp"
+        android:visibility="visible"/>
+
+</LinearLayout>
