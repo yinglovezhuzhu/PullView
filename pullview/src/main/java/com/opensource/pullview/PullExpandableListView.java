@@ -43,7 +43,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     private PullFooterView mFooterView;
 
     private String mLastRefreshTime = "";
-    private int mHeaderLabelVisiblity = View.VISIBLE;
+    private int mHeaderLabelVisibility = View.VISIBLE;
 
     protected int mFirstItemIndex;
     protected int mVisibleItemCount;
@@ -397,12 +397,12 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
      * @see android.view.View#VISIBLE
      */
     public void setHeaderLabelVisibility(int visibility) {
-        this.mHeaderLabelVisiblity = visibility;
-        if (mHeaderLabelVisiblity == View.INVISIBLE) {
-            mHeaderLabelVisiblity = View.GONE;
+        this.mHeaderLabelVisibility = visibility;
+        if (mHeaderLabelVisibility == View.INVISIBLE) {
+            mHeaderLabelVisibility = View.GONE;
             return;
         }
-        mHeaderView.setLabelVisibility(mHeaderLabelVisiblity);
+        mHeaderView.setLabelVisibility(mHeaderLabelVisibility);
     }
 
     /**
@@ -629,7 +629,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
                 break;
         }
         mHeaderView.setVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
-        mHeaderView.setLabelVisibility(mHeaderLabelVisiblity);
+        mHeaderView.setLabelVisibility(mHeaderLabelVisibility);
         mHeaderView.setPadding(0, paddingTop, 0, 0);
     }
 }
