@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values-zh-rCN/pull_view_string.xml -->
+    <eat-comment/>
+    <string name="no_more_data">没有更多数据</string>
+    <string name="pull_view_date_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="pull_view_load_more">加载更多</string>
+    <string name="pull_view_loading">加载中…</string>
+    <string name="pull_view_pull_to_load">上拉加载更多</string>
+    <string name="pull_view_pull_to_refresh">下拉刷新</string>
+    <string name="pull_view_refresh_time">刷新时间</string>
+    <string name="pull_view_refreshing">正在刷新…</string>
+    <string name="pull_view_release_to_load">松开加载更多</string>
+    <string name="pull_view_release_to_refresh">松开刷新</string>
+</resources>

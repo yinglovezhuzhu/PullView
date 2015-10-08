@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2014. The Android Open Source Project.
+  ~
+  ~         yinglovezhuzhu@gmail.com
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~         http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<animation-list
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:oneshot="false"
+    android:variablePadding="false">
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue00" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue01" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue02" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue03" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue04" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue05" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue06" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue07" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue08" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue09" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue10" android:gravity="center"/> -->
+<!--     </item> -->
+<!--     <item android:duration="150"> -->
+<!--         <clip android:clipOrientation="horizontal" android:drawable="@drawable/loading_blue11" android:gravity="center"/> -->
+<!--     </item> -->
+    <item android:duration="150" android:drawable="@drawable/loading_blue00" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue01" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue02" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue03" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue04" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue05" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue06" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue07" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue08" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue09" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue10" />
+    <item android:duration="150" android:drawable="@drawable/loading_blue11" />
+</animation-list>
+<!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/drawable/progress_drawable_round_blue.xml -->
