@@ -116,7 +116,7 @@ public class PullExpandableListViewActivity extends Activity {
         public void clear() {
             mmGroupData.clear();
             mmChildData.clear();
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
 
         @Override
