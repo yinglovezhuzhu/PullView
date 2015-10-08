@@ -242,6 +242,15 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         this.mScrollListener = l;
     }
 
+
+    /**
+     * Can load more or not
+     * @return
+     */
+    public boolean canLoadMore() {
+        return mEnableLoadMore;
+    }
+
     /**
      * Do load more operation.
      */

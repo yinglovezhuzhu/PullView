@@ -1,69 +1,69 @@
 -- Merging decision tree log ---
 manifest
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:1:1-31:12
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:1:1-31:12
 	package
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:2:5-43
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:2:5-43
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
 	android:versionName
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:4:5-30
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:4:5-30
 	android:versionCode
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:3:5-28
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:3:5-28
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:1:11-69
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:1:11-69
 uses-sdk
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:6:5-8:41
-MERGED from [PullView:pullview:unspecified] E:\AndroidStudioProjects\PullView\app\build\intermediates\exploded-aar\PullView\pullview\unspecified\AndroidManifest.xml:7:5-9:41
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:6:5-8:41
+MERGED from [PullView:pullview:unspecified] E:\StudioProjects\PullView\app\build\intermediates\exploded-aar\PullView\pullview\unspecified\AndroidManifest.xml:7:5-9:41
 	android:targetSdkVersion
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:8:9-38
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:8:9-38
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:7:9-34
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
-		INJECTED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:7:9-34
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
+		INJECTED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml
 application
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:10:5-29:19
-MERGED from [PullView:pullview:unspecified] E:\AndroidStudioProjects\PullView\app\build\intermediates\exploded-aar\PullView\pullview\unspecified\AndroidManifest.xml:11:5-16:19
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:10:5-29:19
+MERGED from [PullView:pullview:unspecified] E:\StudioProjects\PullView\app\build\intermediates\exploded-aar\PullView\pullview\unspecified\AndroidManifest.xml:11:5-16:19
 	android:label
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:13:9-41
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:13:9-41
 	android:allowBackup
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:11:9-35
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:11:9-35
 	android:icon
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:12:9-45
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:12:9-45
 	android:theme
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:14:9-40
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:14:9-40
 activity#com.opensource.pullview.demo.MainActivity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:15:9-23:20
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:15:9-23:20
 	android:label
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:17:13-45
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:17:13-45
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:16:13-41
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:16:13-41
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:18:13-22:29
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:18:13-22:29
 action#android.intent.action.MAIN
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:19:17-69
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:19:17-69
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:19:25-66
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:19:25-66
 category#android.intent.category.LAUNCHER
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:21:17-77
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:21:17-77
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:21:27-74
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:21:27-74
 activity#com.opensource.pullview.demo.PullScrollViewActivity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:25:9-60
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:25:9-60
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:25:19-57
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:25:19-57
 activity#com.opensource.pullview.demo.PullListViewActivity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:26:9-58
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:26:9-58
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:26:19-55
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:26:19-55
 activity#com.opensource.pullview.demo.PullListView2Activity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:27:9-59
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:27:9-59
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:27:19-56
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:27:19-56
 activity#com.opensource.pullview.demo.PullExpandableListViewActivity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:9-68
+ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:28:9-68
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:19-65
+		ADDED from E:\StudioProjects\PullView\app\src\main\AndroidManifest.xml:28:19-65

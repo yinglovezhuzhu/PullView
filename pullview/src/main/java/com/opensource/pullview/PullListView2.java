@@ -83,7 +83,6 @@ public class PullListView2 extends BasePullListView {
     }
 
     private int mStartY = 0;
-    private int mScrollY = 0;
     private boolean mRecording = false;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -104,7 +103,7 @@ public class PullListView2 extends BasePullListView {
                         mStartY = tempY;
                     }
                     int moveY = tempY - mStartY;
-                    mScrollY = moveY / OFFSET_RATIO;
+                    int scrollY = moveY / OFFSET_RATIO;
 
                     // Ensure that the process of setting padding, current position has always been at the header,
                     // or if when the list exceeds the screen, then, when the push, the list will scroll at the same time
@@ -114,29 +113,29 @@ public class PullListView2 extends BasePullListView {
                         		setSelection(mFirstItemIndex);
                         	}
                             // Slide up, header part was covered, but not all be covered(Pull up to cancel)
-                            if (moveY > 0 && (mScrollY < mMinPullDownDist)) {
+                            if (moveY > 0 && (scrollY < mMinPullDownDist)) {
                                 mState = PULL_TO_LOAD;
                             } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                 // Slide to the top
                                 mState = IDEL;
                             }
-                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             break;
                         case PULL_TO_LOAD:
                         	if(mFirstItemIndex + mVisibleItemCount < mTotalItemCount) {
                         		setSelection(mFirstItemIndex);
                         	}
                             // Pull down to the state can enter RELEASE_TO_REFRESH
-                            if (mScrollY >= mMinPullDownDist) {
+                            if (scrollY >= mMinPullDownDist) {
                                 mState = RELEASE_TO_LOAD;
                             } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                 mState = IDEL;
                             }
-                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
+                            updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             break;
                         case LOADING:
                             if (moveY > 0 && mFirstItemIndex == 0) {
-                                updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + mScrollY);
+                                updateHeaderViewByState(mHeaderView.mVisibleHeight - mHeaderView.mViewHeight + scrollY);
                             }
                             break;
                         case IDEL:

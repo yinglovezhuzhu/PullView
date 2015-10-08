@@ -62,4 +62,4 @@
             android:adjustViewBounds="true"
             android:src="@drawable/bg_header"/>
     </LinearLayout>
-</LinearLayout><!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/layout/layout_background_view.xml -->
+</LinearLayout><!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/layout/layout_background_view.xml -->

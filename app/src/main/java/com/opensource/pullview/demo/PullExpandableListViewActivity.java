@@ -10,12 +10,17 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.opensource.pullview.IPullView;
+import com.opensource.pullview.OnLoadMoreListener;
 import com.opensource.pullview.OnRefreshListener;
 import com.opensource.pullview.PullExpandableListView;
 
+import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,24 +50,25 @@ public class PullExpandableListViewActivity extends Activity {
                     if(null != mPullExpandableListView) {
                         if(null != mAdapter) {
                             mAdapter.clear();
-                            mAdapter.initData();
+                            mAdapter.initData(0);
                             mAdapter.notifyDataSetChanged();
                         }
                         mPullExpandableListView.refreshCompleted();
-//                        mPullExpandableListView.loadMoreCompleted(mDatas.size() < 50);
+                        mPullExpandableListView.loadMoreCompleted(mAdapter.getGroupCount() < 50);
                         Log.e(TAG, "Refresh finished +=====================^_^");
                     }
                     break;
-//                case MSG_LOAD_DONE:
-//                    if(null != mPullExpandableListView) {
-//                        if(null != mAdapter) {
-//                            mAdapter.notifyDataSetChanged();
-//                        }
-//                        mPullExpandableListView.refreshCompleted();
-//                        mPullExpandableListView.loadMoreCompleted(mDatas.size() < 50);
-//                        Log.e(TAG, "Load more finished +=====================^_^");
-//                    }
-//                    break;
+                case MSG_LOAD_DONE:
+                    if(null != mPullExpandableListView) {
+                        if(null != mAdapter) {
+                            mAdapter.initData(mAdapter.getGroupCount());
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        mPullExpandableListView.refreshCompleted();
+                        mPullExpandableListView.loadMoreCompleted(mAdapter.getGroupCount() < 50);
+                        Log.e(TAG, "Load more finished +=====================^_^");
+                    }
+                    break;
                 default:
                     break;
             }
@@ -77,6 +83,7 @@ public class PullExpandableListViewActivity extends Activity {
         setContentView(R.layout.activity_pull_expandable_listview);
 
         mPullExpandableListView = (PullExpandableListView) findViewById(R.id.pull_expandable_listview);
+        mPullExpandableListView.setLoadMode(IPullView.LoadMode.AUTO_LOAD);
         mAdapter = new ExAdapter(this);
         mPullExpandableListView.setAdapter(mAdapter);
 
@@ -86,6 +93,41 @@ public class PullExpandableListViewActivity extends Activity {
             public void onRefresh() {
                 mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
                 Log.e(TAG, "Start refresh+=====================^_^");
+            }
+        });
+
+        mPullExpandableListView.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+            @Override
+            public void onLoadMore() {
+                mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
+                Log.e(TAG, "Start load more+=====================^_^");
+            }
+        });
+
+        mPullExpandableListView.onFootLoading("正在加载");
+        mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
+
+        mPullExpandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            int firstVisibleItem = 0;
+            int visibleItemCount = 0;
+            int totalItemCount = 0;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(AbsListView.OnScrollListener.SCROLL_STATE_IDLE == scrollState
+                        && firstVisibleItem + visibleItemCount == totalItemCount
+                        && !mPullExpandableListView.canLoadMore()) {
+                    Toast.makeText(PullExpandableListViewActivity.this, "没有更多数据", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                this.firstVisibleItem = firstVisibleItem;
+                this.visibleItemCount = visibleItemCount;
+                this.totalItemCount = totalItemCount;
             }
         });
 
@@ -99,11 +141,11 @@ public class PullExpandableListViewActivity extends Activity {
 
         public ExAdapter(Context context) {
             this.mmContext = context;
-            initData();
+//            initData(0);
         }
 
-        public void initData() {
-            for(int i = 0; i < 10; i++) {
+        public void initData(int start) {
+            for(int i = start; i < start + 20; i++) {
                 mmGroupData.add("Group--" + i);
                 ArrayList<String> childs = new ArrayList<>();
                 for(int j = 0; j < 20; j++) {
@@ -159,7 +201,7 @@ public class PullExpandableListViewActivity extends Activity {
             TextView tv = null;
             if(null == convertView) {
                 tv = new TextView(mmContext);
-                tv.setPadding(10, 10, 10, 10);
+                tv.setPadding(10, 20, 10, 20);
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
                 convertView = tv;
             } else {
@@ -174,7 +216,7 @@ public class PullExpandableListViewActivity extends Activity {
             TextView tv = null;
             if(null == convertView) {
                 tv = new TextView(mmContext);
-                tv.setPadding(10, 10, 10, 10);
+                tv.setPadding(10, 15, 10, 15);
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                 convertView = tv;
             } else {
@@ -186,7 +228,7 @@ public class PullExpandableListViewActivity extends Activity {
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
+            return true;
         }
     }
 }

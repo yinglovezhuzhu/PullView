@@ -20,4 +20,4 @@
     android:id="@+id/listview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
-<!-- From: file:/E:/AndroidStudioProjects/PullView/app/src/main/res/layout/activity_main.xml -->
+<!-- From: file:/E:/StudioProjects/PullView/app/src/main/res/layout/activity_main.xml -->

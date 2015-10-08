@@ -30,4 +30,4 @@
         android:textSize="22sp"
         android:textColor="#FF000000"
         android:text="@string/app_name"/>
-</LinearLayout><!-- From: file:/E:/AndroidStudioProjects/PullView/app/src/main/res/layout/layout_header_top.xml -->
+</LinearLayout><!-- From: file:/E:/StudioProjects/PullView/app/src/main/res/layout/layout_header_top.xml -->

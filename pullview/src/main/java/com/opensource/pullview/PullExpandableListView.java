@@ -132,7 +132,6 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     }
 
     private int mStartY;
-    private int mScrollY = 0;
     private boolean mRecording = false;
     private boolean mIsBack = false;
 
@@ -154,7 +153,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
                         mRecording = true;
                         mStartY = tempY;
                     }
-                    mScrollY = moveY / OFFSET_RATIO;
+                    int scrollY = moveY / OFFSET_RATIO;
 
                     if (mState != LOADING && (mEnablePullRefresh || mEnableOverScroll)) {
                         // Ensure that the process of setting padding, current position has always been at the header,
@@ -165,26 +164,26 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
                                     setSelection(mFirstItemIndex);
                                 }
                                 // Slide up, header part was covered, but not all be covered(Pull up to cancel)
-                                if (moveY > 0 && (mScrollY < mHeaderView.mViewHeight)) {
+                                if (moveY > 0 && (scrollY < mHeaderView.mViewHeight)) {
                                     mState = PULL_TO_LOAD;
                                 } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                     // Slide to the top
                                     mState = IDEL;
                                 }
-                                updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
+                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
                                 break;
                             case PULL_TO_LOAD:
                                 if(mFirstItemIndex + mVisibleItemCount < mTotalItemCount) {
                                     setSelection(mFirstItemIndex);
                                 }
                                 // Pull down to the state can enter RELEASE_TO_REFRESH
-                                if (mScrollY >= mHeaderView.mViewHeight) {
+                                if (scrollY >= mHeaderView.mViewHeight) {
                                     mState = RELEASE_TO_LOAD;
                                     mIsBack = true;
                                 } else if (moveY <= 0 && mFirstItemIndex == 0) {
                                     mState = IDEL;
                                 }
-                                updateHeaderViewByState(mScrollY - mHeaderView.mViewHeight);
+                                updateHeaderViewByState(scrollY - mHeaderView.mViewHeight);
                                 break;
                             case IDEL:
                                 if (moveY > 0 && mFirstItemIndex == 0) {
@@ -196,8 +195,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
                                 break;
                         }
                     }
-                }
-                if (mVerticalScrollRange > mVerticalScrollExtent && mFirstItemIndex + mVisibleItemCount == mTotalItemCount) {
+                } else if (mVerticalScrollRange > mVerticalScrollExtent && mFirstItemIndex + mVisibleItemCount == mTotalItemCount) {
                     if (!mRecording) {
                         mRecording = true;
                         mStartY = tempY;
@@ -280,8 +278,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
                         default:
                             break;
                     }
-                }
-                if (mFirstItemIndex + mVisibleItemCount >= mTotalItemCount) {
+                } else if (mFirstItemIndex + mVisibleItemCount >= mTotalItemCount) {
                     switch (mState) {
                         case IDEL:
                             //Do nothing.
@@ -318,28 +315,6 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     @Override
     public void setOnScrollListener(OnScrollListener l) {
         this.mScrollListener = l;
-    }
-
-    /**
-     * Do load more operation.
-     */
-    protected void loadMore() {
-        if (null == mLoadMoreListener || mState == LOADING) {
-            return;
-        }
-        mRefreshing = false;
-        mLoadMoreListener.onLoadMore();
-    }
-
-    /**
-     * Do refresh operation.
-     */
-    protected void refresh() {
-        if (null == mRefreshListener || mState == LOADING) {
-            return;
-        }
-        mRefreshing = true;
-        mRefreshListener.onRefresh();
     }
 
     /**
@@ -557,6 +532,14 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
         return mRefreshing;
     }
 
+    /**
+     * Can load more or not
+     * @return
+     */
+    public boolean canLoadMore() {
+        return mEnableLoadMore;
+    }
+
     private void initView(Context context) {
         mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
@@ -632,5 +615,28 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
         mHeaderView.setVisibility(mEnablePullRefresh ? View.VISIBLE : View.INVISIBLE);
         mHeaderView.setLabelVisibility(mHeaderLabelVisibility);
         mHeaderView.setPadding(0, paddingTop, 0, 0);
+    }
+
+
+    /**
+     * Do load more operation.
+     */
+    private void loadMore() {
+        if (null == mLoadMoreListener || mState == LOADING) {
+            return;
+        }
+        mRefreshing = false;
+        mLoadMoreListener.onLoadMore();
+    }
+
+    /**
+     * Do refresh operation.
+     */
+    private void refresh() {
+        if (null == mRefreshListener || mState == LOADING) {
+            return;
+        }
+        mRefreshing = true;
+        mRefreshListener.onRefresh();
     }
 }
