@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PullView.iml" filepath="$PROJECT_DIR$/PullView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pullview/PullView-PullView.iml" filepath="$PROJECT_DIR$/pullview/PullView-PullView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/pullview/pullview.iml" filepath="$PROJECT_DIR$/pullview/pullview.iml" />
     </modules>
