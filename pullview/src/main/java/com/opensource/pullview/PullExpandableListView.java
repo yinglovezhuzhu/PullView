@@ -32,6 +32,7 @@ import android.widget.ExpandableListView;
 import com.opensource.pullview.utils.DateUtil;
 
 /**
+ * Pull to refresh ExpandableListView
  * Created by yinglovezhuzhu@gmail.com on 2015/10/8.
  */
 public class PullExpandableListView extends ExpandableListView implements IPullView, AbsListView.OnScrollListener {
