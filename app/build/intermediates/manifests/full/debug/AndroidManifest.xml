@@ -25,7 +25,7 @@
         <activity android:name="com.opensource.pullview.demo.PullScrollViewActivity" />
         <activity android:name="com.opensource.pullview.demo.PullListViewActivity" />
         <activity android:name="com.opensource.pullview.demo.PullListView2Activity" />
-        <activity android:name="com.opensource.pullview.demo.PullGridViewActivity" />
+        <activity android:name="com.opensource.pullview.demo.PullExpandableListViewActivity" />
     </application>
 
 </manifest>

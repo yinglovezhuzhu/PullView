@@ -6,6 +6,7 @@
         <item>PullScrollView</item>
         <item>PullListview</item>
         <item>PullListview2</item>
+        <item>PullExpandableListview</item>
     </string-array>
     <!-- From: file:/E:/AndroidStudioProjects/PullView/app/build/intermediates/exploded-aar/PullView/pullview/unspecified/res/values/values.xml -->
     <eat-comment/>

@@ -63,7 +63,7 @@ activity#com.opensource.pullview.demo.PullListView2Activity
 ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:27:9-59
 	android:name
 		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:27:19-56
-activity#com.opensource.pullview.demo.PullGridViewActivity
-ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:9-58
+activity#com.opensource.pullview.demo.PullExpandableListViewActivity
+ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:9-68
 	android:name
-		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:19-55
+		ADDED from E:\AndroidStudioProjects\PullView\app\src\main\AndroidManifest.xml:28:19-65

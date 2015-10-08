@@ -22,6 +22,7 @@
         <item>PullScrollView</item>
         <item>PullListview</item>
         <item>PullListview2</item>
+        <item>PullExpandableListview</item>
     </string-array>
     
 </resources>

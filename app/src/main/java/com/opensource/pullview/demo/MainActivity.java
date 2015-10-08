@@ -26,6 +26,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.opensource.pullview.PullExpandableListView;
+
 
 public class MainActivity extends ListActivity {
 	
@@ -51,6 +53,9 @@ public class MainActivity extends ListActivity {
                         break;
                     case 2:
                         intent.setClass(MainActivity.this, PullListView2Activity.class);
+                        break;
+                    case 3:
+                        intent.setClass(MainActivity.this, PullExpandableListViewActivity.class);
                         break;
                     default:
                         break;
