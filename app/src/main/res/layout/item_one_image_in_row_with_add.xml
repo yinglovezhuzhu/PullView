@@ -9,6 +9,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:src="@drawable/ic_launcher"/>
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="match_parent"
+        android:background="#FF808080" />
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -20,12 +24,20 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_launcher"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#FF808080" />
         <ImageView
             android:id="@+id/iv_item_one_three_image_in_row_small_two"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_launcher" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#FF808080" />
         <ImageView
             android:id="@+id/iv_item_one_three_image_in_row_small_three"
             android:layout_width="match_parent"

@@ -9,6 +9,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:src="@drawable/ic_launcher"/>
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="match_parent"
+        android:background="#FF808080" />
     <ImageView
         android:id="@+id/iv_item_two_image_in_row_two"
         android:layout_width="match_parent"
