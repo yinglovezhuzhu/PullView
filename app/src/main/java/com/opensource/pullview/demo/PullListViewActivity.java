@@ -18,10 +18,12 @@
 package com.opensource.pullview.demo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +31,9 @@ import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.opensource.pullview.OnLoadMoreListener;
@@ -140,5 +144,76 @@ public class PullListViewActivity extends Activity {
 		
 		mListView.onFootLoading("正在加载");
 		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
+	}
+
+
+	private class PLAdapter extends BaseAdapter {
+
+		private Context mmContext;
+		private List<String> mDatas = new ArrayList<>();
+
+		private void addAll(Collection<String> datas) {
+			if(null == datas || datas.isEmpty()) {
+				return;
+			}
+			mDatas.addAll(datas);
+			notifyDataSetChanged();
+		}
+
+
+		@Override
+		public int getCount() {
+			int count = 0;
+			int size = 0;
+			if(mDatas.size() < 3) {
+				count = mDatas.size();
+			} else if(mDatas.size() < 8) {
+				count = 3;
+				size = mDatas.size() - count;
+				count += size % 2 == 0 ? size / 2 : size / 2 + 1;
+			} else if(mDatas.size() < 17) {
+				count = 7;
+				size = mDatas.size() - count;
+				count += size % 3 == 0 ? size / 3 : size / 3 + 1;
+			} else {
+				count = 16;
+				size = mDatas.size() - count;
+				count += size % 4 == 0 ? size / 4 : size / 4 + 1;
+			}
+			return count;
+		}
+
+		@Override
+		public String [] getItem(int position) {
+			String [] item;
+			if(mDatas.size() < 3) {
+				item = new String [] {mDatas.get(position), };
+			} else if(mDatas.size() < 8) {
+				item = new String[2];
+				int index = 3;
+				for(int i = 0; i < 2; i++) {
+					item[i] = mDatas.get(index);
+					index++;
+					if(index >= mDatas.size()) {
+						break;
+					}
+				}
+			} else if(mDatas.size() < 17) {
+				item = new String[3];
+			} else {
+				item = new String[4];
+			}
+			return item;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			return null;
+		}
 	}
 }
