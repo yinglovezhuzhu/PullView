@@ -7,25 +7,26 @@
 package com.opensource.pullview;
 
 public final class R {
-	public static final class array {
-		public static final int demo_items = 0x7f060000;
+	public static final class attr {
+		public static final int loadMode = 0x7f010000;
+		public static final int overScroll = 0x7f010001;
 	}
 	public static final class color {
-		public static final int pullview_black = 0x7f070000;
-		public static final int pullview_orange = 0x7f070001;
+		public static final int pullview_black = 0x7f060000;
+		public static final int pullview_orange = 0x7f060001;
 	}
 	public static final class dimen {
-		public static final int pullview_footer_arrow_content_minSize = 0x7f080000;
-		public static final int pullview_footer_progress_size = 0x7f080001;
-		public static final int pullview_footer_title_padding = 0x7f080002;
-		public static final int pullview_footer_title_textSize = 0x7f080003;
-		public static final int pullview_header2_top_content_minHeight = 0x7f080004;
-		public static final int pullview_header_arrow_content_minSize = 0x7f080005;
-		public static final int pullview_header_label_paddingTop = 0x7f080006;
-		public static final int pullview_header_label_textSize = 0x7f080007;
-		public static final int pullview_header_progress_size = 0x7f080008;
-		public static final int pullview_header_title_margingLeft = 0x7f080009;
-		public static final int pullview_header_title_textSize = 0x7f08000a;
+		public static final int pullview_footer_arrow_content_minSize = 0x7f070000;
+		public static final int pullview_footer_progress_size = 0x7f070001;
+		public static final int pullview_footer_title_padding = 0x7f070002;
+		public static final int pullview_footer_title_textSize = 0x7f070003;
+		public static final int pullview_header2_top_content_minHeight = 0x7f070004;
+		public static final int pullview_header_arrow_content_minSize = 0x7f070005;
+		public static final int pullview_header_label_paddingTop = 0x7f070006;
+		public static final int pullview_header_label_textSize = 0x7f070007;
+		public static final int pullview_header_progress_size = 0x7f070008;
+		public static final int pullview_header_title_margingLeft = 0x7f070009;
+		public static final int pullview_header_title_textSize = 0x7f07000a;
 	}
 	public static final class drawable {
 		public static final int background_image = 0x7f020000;
@@ -48,20 +49,22 @@ public final class R {
 		public static final int pullview_up_arrow = 0x7f020011;
 	}
 	public static final class id {
-		public static final int fl_pull_lsitview_header_content = 0x7f090009;
-		public static final int iv_pull_listview_header_bg = 0x7f09000b;
-		public static final int iv_pullview_footer_arrow = 0x7f090000;
-		public static final int iv_pullview_header_arrow = 0x7f090004;
-		public static final int ll_pull_listview_header_bg_content = 0x7f09000a;
-		public static final int ll_pull_listview_header_state_content = 0x7f09000d;
-		public static final int ll_pull_listview_header_top = 0x7f090008;
-		public static final int ll_pull_listview_header_view_content = 0x7f09000c;
-		public static final int ll_pullview_header = 0x7f090003;
-		public static final int pb_pullview_footer_progress = 0x7f090001;
-		public static final int pb_pullview_header_progress = 0x7f090005;
-		public static final int tv_pullview_footer_title = 0x7f090002;
-		public static final int tv_pullview_header_label = 0x7f090007;
-		public static final int tv_pullview_header_title = 0x7f090006;
+		public static final int autoLoad = 0x7f080000;
+		public static final int fl_pull_lsitview_header_content = 0x7f08000b;
+		public static final int iv_pull_listview_header_bg = 0x7f08000d;
+		public static final int iv_pullview_footer_arrow = 0x7f080002;
+		public static final int iv_pullview_header_arrow = 0x7f080006;
+		public static final int ll_pull_listview_header_bg_content = 0x7f08000c;
+		public static final int ll_pull_listview_header_state_content = 0x7f08000f;
+		public static final int ll_pull_listview_header_top = 0x7f08000a;
+		public static final int ll_pull_listview_header_view_content = 0x7f08000e;
+		public static final int ll_pullview_header = 0x7f080005;
+		public static final int pb_pullview_footer_progress = 0x7f080003;
+		public static final int pb_pullview_header_progress = 0x7f080007;
+		public static final int pullToLoad = 0x7f080001;
+		public static final int tv_pullview_footer_title = 0x7f080004;
+		public static final int tv_pullview_header_label = 0x7f080009;
+		public static final int tv_pullview_header_title = 0x7f080008;
 	}
 	public static final class layout {
 		public static final int layout_background_view = 0x7f030000;
@@ -85,5 +88,10 @@ public final class R {
 	public static final class style {
 		public static final int AppBaseTheme = 0x7f040000;
 		public static final int AppTheme = 0x7f040001;
+	}
+	public static final class styleable {
+		public static final int[] PullView = { 0x7f010000, 0x7f010001 };
+		public static final int PullView_loadMode = 0;
+		public static final int PullView_overScroll = 1;
 	}
 }

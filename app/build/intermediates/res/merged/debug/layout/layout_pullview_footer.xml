@@ -50,4 +50,4 @@
         android:singleLine="true"
         android:textSize="@dimen/pullview_footer_title_textSize"
         android:textColor="@color/pullview_black"/>
-</LinearLayout><!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/layout/layout_pullview_footer.xml --><!-- From: file:/E:/StudioProjects/PullView/app/build/intermediates/exploded-aar/PullView/pullview/unspecified/res/layout/layout_pullview_footer.xml -->
+</LinearLayout><!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/layout/layout_pullview_footer.xml --><!-- From: file:/E:/AndroidStudioProjects/PullView/app/build/intermediates/exploded-aar/PullView/pullview/unspecified/res/layout/layout_pullview_footer.xml -->

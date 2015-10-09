@@ -12,6 +12,25 @@ public final class R {
         public static final int demo_items=0x7f060000;
     }
     public static final class attr {
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>pullToLoad</code></td><td>0</td><td></td></tr>
+<tr><td><code>autoLoad</code></td><td>1</td><td></td></tr>
+</table>
+         */
+        public static final int loadMode=0x7f010000;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int overScroll=0x7f010001;
     }
     public static final class color {
         public static final int pullview_black=0x7f070000;
@@ -51,26 +70,36 @@ public final class R {
         public static final int pullview_up_arrow=0x7f020011;
     }
     public static final class id {
-        public static final int fl_pull_lsitview_header_content=0x7f09000f;
-        public static final int iv_pull_listview_header_bg=0x7f090011;
-        public static final int iv_pullview_footer_arrow=0x7f090006;
-        public static final int iv_pullview_header_arrow=0x7f09000a;
-        public static final int listview=0x7f090000;
-        public static final int ll_pull_listview_header_bg_content=0x7f090010;
-        public static final int ll_pull_listview_header_state_content=0x7f090013;
-        public static final int ll_pull_listview_header_top=0x7f09000e;
-        public static final int ll_pull_listview_header_view_content=0x7f090012;
-        public static final int ll_pullview_header=0x7f090009;
-        public static final int pb_pullview_footer_progress=0x7f090007;
-        public static final int pb_pullview_header_progress=0x7f09000b;
-        public static final int pull_expandable_listview=0x7f090001;
-        public static final int pull_list_view=0x7f090002;
-        public static final int pull_list_view2=0x7f090003;
-        public static final int pull_list_view2_progress=0x7f090004;
-        public static final int pull_scroll_view=0x7f090005;
-        public static final int tv_pullview_footer_title=0x7f090008;
-        public static final int tv_pullview_header_label=0x7f09000d;
-        public static final int tv_pullview_header_title=0x7f09000c;
+        public static final int autoLoad=0x7f090000;
+        public static final int fl_pull_lsitview_header_content=0x7f090019;
+        public static final int ibtn_contact_group_opt=0x7f09000a;
+        public static final int ibtn_contact_user_opt=0x7f09000f;
+        public static final int iv_contact_group_indicator=0x7f090008;
+        public static final int iv_contact_user_avatar=0x7f09000b;
+        public static final int iv_contact_user_gender=0x7f09000c;
+        public static final int iv_pull_listview_header_bg=0x7f09001b;
+        public static final int iv_pullview_footer_arrow=0x7f090010;
+        public static final int iv_pullview_header_arrow=0x7f090014;
+        public static final int listview=0x7f090002;
+        public static final int ll_pull_listview_header_bg_content=0x7f09001a;
+        public static final int ll_pull_listview_header_state_content=0x7f09001d;
+        public static final int ll_pull_listview_header_top=0x7f090018;
+        public static final int ll_pull_listview_header_view_content=0x7f09001c;
+        public static final int ll_pullview_header=0x7f090013;
+        public static final int pb_pullview_footer_progress=0x7f090011;
+        public static final int pb_pullview_header_progress=0x7f090015;
+        public static final int pullToLoad=0x7f090001;
+        public static final int pull_expandable_listview=0x7f090003;
+        public static final int pull_list_view=0x7f090004;
+        public static final int pull_list_view2=0x7f090005;
+        public static final int pull_list_view2_progress=0x7f090006;
+        public static final int pull_scroll_view=0x7f090007;
+        public static final int tv_contact_group_name=0x7f090009;
+        public static final int tv_contact_user_honor=0x7f09000e;
+        public static final int tv_contact_user_name=0x7f09000d;
+        public static final int tv_pullview_footer_title=0x7f090012;
+        public static final int tv_pullview_header_label=0x7f090017;
+        public static final int tv_pullview_header_title=0x7f090016;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -78,12 +107,14 @@ public final class R {
         public static final int activity_pull_listview=0x7f030002;
         public static final int activity_pull_listview2=0x7f030003;
         public static final int activity_pull_scroll_view=0x7f030004;
-        public static final int layout_background_view=0x7f030005;
-        public static final int layout_header_content=0x7f030006;
-        public static final int layout_header_top=0x7f030007;
-        public static final int layout_pullview_footer=0x7f030008;
-        public static final int layout_pullview_header=0x7f030009;
-        public static final int layout_pullview_header2=0x7f03000a;
+        public static final int item_contact_group=0x7f030005;
+        public static final int item_contact_user=0x7f030006;
+        public static final int layout_background_view=0x7f030007;
+        public static final int layout_header_content=0x7f030008;
+        public static final int layout_header_top=0x7f030009;
+        public static final int layout_pullview_footer=0x7f03000a;
+        public static final int layout_pullview_header=0x7f03000b;
+        public static final int layout_pullview_header2=0x7f03000c;
     }
     public static final class string {
         public static final int app_name=0x7f05000a;
@@ -112,4 +143,52 @@ public final class R {
          */
         public static final int AppTheme=0x7f040001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a PullView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #PullView_loadMode com.opensource.pullview.demo:loadMode}</code></td><td></td></tr>
+           <tr><td><code>{@link #PullView_overScroll com.opensource.pullview.demo:overScroll}</code></td><td></td></tr>
+           </table>
+           @see #PullView_loadMode
+           @see #PullView_overScroll
+         */
+        public static final int[] PullView = {
+            0x7f010000, 0x7f010001
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.opensource.pullview.demo.R.attr#loadMode}
+          attribute's value can be found in the {@link #PullView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>pullToLoad</code></td><td>0</td><td></td></tr>
+<tr><td><code>autoLoad</code></td><td>1</td><td></td></tr>
+</table>
+          @attr name com.opensource.pullview.demo:loadMode
+        */
+        public static final int PullView_loadMode = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.opensource.pullview.demo.R.attr#overScroll}
+          attribute's value can be found in the {@link #PullView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.opensource.pullview.demo:overScroll
+        */
+        public static final int PullView_overScroll = 1;
+    };
 }

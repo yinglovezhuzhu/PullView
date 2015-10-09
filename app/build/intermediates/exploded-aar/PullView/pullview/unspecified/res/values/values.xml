@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/arrays.xml -->
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/pull_view_attrs.xml -->
     <eat-comment/>
-    <string-array name="demo_items">
-        <item>PullScrollView</item>
-        <item>PullListview</item>
-        <item>PullListview2</item>
-        <item>PullExpandableListview</item>
-    </string-array>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/pull_view_colors.xml -->
+    <attr name="loadMode">
+        <enum name="pullToLoad" value="0"/>
+        <enum name="autoLoad" value="1"/>
+    </attr>
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/pull_view_colors.xml -->
     <eat-comment/>
     <color name="pullview_black">#FF000000</color>
     <color name="pullview_orange">#FFFF6E00</color>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/pull_view_dimens.xml -->
+    <declare-styleable name="PullView"><attr name="loadMode"/><attr format="boolean" name="overScroll"/></declare-styleable>
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/pull_view_dimens.xml -->
     <eat-comment/>
     <dimen name="pullview_footer_arrow_content_minSize">50dip</dimen>
     <dimen name="pullview_footer_progress_size">30dip</dimen>
@@ -25,10 +24,10 @@
     <dimen name="pullview_header_progress_size">30dip</dimen>
     <dimen name="pullview_header_title_margingLeft">10dip</dimen>
     <dimen name="pullview_header_title_textSize">18sp</dimen>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/strings.xml -->
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">PullView</string>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/pull_view_string.xml -->
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/pull_view_string.xml -->
     <eat-comment/>
     <string name="no_more_data">No more data</string>
     <string name="pull_view_date_format">yyyy-MM-dd HH:mm:ss</string>
@@ -40,7 +39,7 @@
     <string name="pull_view_refreshing">Refreshing…</string>
     <string name="pull_view_release_to_load">Release to load more</string>
     <string name="pull_view_release_to_refresh">Release to refresh</string>
-    <!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/values/styles.xml -->
+    <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--

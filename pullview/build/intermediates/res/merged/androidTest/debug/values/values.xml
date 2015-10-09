@@ -2,13 +2,13 @@
 <resources>
     <!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/build/intermediates/bundles/debug/res/values/values.xml -->
     <eat-comment/>
-    <string-array name="demo_items">
-        <item>PullScrollView</item>
-        <item>PullListview</item>
-        <item>PullListview2</item>
-    </string-array>
+    <attr name="loadMode">
+        <enum name="pullToLoad" value="0"/>
+        <enum name="autoLoad" value="1"/>
+    </attr>
     <color name="pullview_black">#FF000000</color>
     <color name="pullview_orange">#FFFF6E00</color>
+    <declare-styleable name="PullView"><attr name="loadMode"/><attr format="boolean" name="overScroll"/></declare-styleable>
     <dimen name="pullview_footer_arrow_content_minSize">50dip</dimen>
     <dimen name="pullview_footer_progress_size">30dip</dimen>
     <dimen name="pullview_footer_title_padding">15dip</dimen>

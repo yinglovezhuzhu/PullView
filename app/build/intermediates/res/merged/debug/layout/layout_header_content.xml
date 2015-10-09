@@ -41,4 +41,4 @@
         android:src="@drawable/ic_launcher"
         android:padding="15dip"
         android:background="#FFAABBDD"/>
-</LinearLayout><!-- From: file:/E:/StudioProjects/PullView/app/src/main/res/layout/layout_header_content.xml -->
+</LinearLayout><!-- From: file:/E:/AndroidStudioProjects/PullView/app/src/main/res/layout/layout_header_content.xml -->

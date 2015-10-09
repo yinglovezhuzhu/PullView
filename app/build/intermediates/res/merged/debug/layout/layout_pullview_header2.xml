@@ -78,4 +78,4 @@
             android:indeterminate="false"
             android:visibility="invisible"/>
     </LinearLayout>
-</RelativeLayout><!-- From: file:/E:/StudioProjects/PullView/pullview/src/main/res/layout/layout_pullview_header2.xml --><!-- From: file:/E:/StudioProjects/PullView/app/build/intermediates/exploded-aar/PullView/pullview/unspecified/res/layout/layout_pullview_header2.xml -->
+</RelativeLayout><!-- From: file:/E:/AndroidStudioProjects/PullView/pullview/src/main/res/layout/layout_pullview_header2.xml --><!-- From: file:/E:/AndroidStudioProjects/PullView/app/build/intermediates/exploded-aar/PullView/pullview/unspecified/res/layout/layout_pullview_header2.xml -->
