@@ -19,6 +19,7 @@
 package com.opensource.pullview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -78,7 +79,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context) {
         super(context);
-        initView(context);
+        initView(context, null);
     }
 
     /**
@@ -88,7 +89,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView(context);
+        initView(context, attrs);
     }
 
     /**
@@ -98,7 +99,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
      */
     public BasePullListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initView(context);
+        initView(context, attrs);
     }
 
     @Override
@@ -421,7 +422,23 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
         return mRefreshing;
     }
 
-    private void initView(Context context) {
+    private void initView(Context context, AttributeSet attrs) {
+
+        if(null != attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullView);
+            if(a.hasValue(R.styleable.PullView_loadMode)) {
+                int loadMoreMode = a.getInt(R.styleable.PullView_loadMode, LoadMode.AUTO_LOAD.value());
+                LoadMode loadMode = LoadMode.valueOf(loadMoreMode);
+                if(null != loadMode) {
+                    setLoadMode(loadMode);
+                }
+            }
+            if(a.hasValue(R.styleable.PullView_overScroll)) {
+                mEnableOverScroll = a.getBoolean(R.styleable.PullView_overScroll, true);
+            }
+            a.recycle();
+        }
+
         mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
         mDownToUpAnimation.setDuration(ROTATE_ANIMATION_DURATION);

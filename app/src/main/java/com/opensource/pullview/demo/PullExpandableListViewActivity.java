@@ -82,7 +82,6 @@ public class PullExpandableListViewActivity extends Activity {
         setContentView(R.layout.activity_pull_expandable_listview);
 
         mPullExpandableListView = (PullExpandableListView) findViewById(R.id.pull_expandable_listview);
-        mPullExpandableListView.setLoadMode(IPullView.LoadMode.AUTO_LOAD);
         mAdapter = new ExAdapter(this);
         mPullExpandableListView.setAdapter(mAdapter);
 

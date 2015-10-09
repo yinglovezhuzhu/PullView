@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <attr name="loadMode">
+        <enum name="pullToLoad" value="0" />
+        <enum name="autoLoad" value="1" />
+    </attr>
+    
+    <declare-styleable name="PullView" >
+        <attr name="loadMode" />
+        <attr name="overScroll" format="boolean" />
+    </declare-styleable>
+</resources>

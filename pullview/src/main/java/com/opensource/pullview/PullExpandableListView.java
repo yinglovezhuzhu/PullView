@@ -19,6 +19,7 @@ package com.opensource.pullview;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -37,8 +38,8 @@ import com.opensource.pullview.utils.DateUtil;
  */
 public class PullExpandableListView extends ExpandableListView implements IPullView, AbsListView.OnScrollListener {
 
-    protected RotateAnimation mDownToUpAnimation;
-    protected RotateAnimation mUpToDownAnimation;
+    private RotateAnimation mDownToUpAnimation;
+    private RotateAnimation mUpToDownAnimation;
 
     private PullHeaderView mHeaderView;
     private PullFooterView mFooterView;
@@ -46,58 +47,58 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     private String mLastRefreshTime = "";
     private int mHeaderLabelVisibility = View.VISIBLE;
 
-    protected int mFirstItemIndex;
-    protected int mVisibleItemCount;
-    protected int mTotalItemCount;
+    private int mFirstItemIndex;
+    private int mVisibleItemCount;
+    private int mTotalItemCount;
 
-    protected int mVerticalScrollOffset = 0;
-    protected int mVerticalScrollExtent = 0;
-    protected int mVerticalScrollRange = 0;
+    private int mVerticalScrollOffset = 0;
+    private int mVerticalScrollExtent = 0;
+    private int mVerticalScrollRange = 0;
 
     /**
      * Whether it can refresh.
      */
-    protected boolean mEnablePullRefresh = false;
+    private boolean mEnablePullRefresh = false;
     /**
      * Whether it can load more data.
      */
-    protected boolean mEnableLoadMore = false;
+    private boolean mEnableLoadMore = false;
     /**
      * Is refreshing data
      */
-    protected boolean mRefreshing = false;
+    private boolean mRefreshing = false;
     /**
      * Can be over scroll *
      */
-    protected boolean mEnableOverScroll = true;
+    private boolean mEnableOverScroll = true;
 
-    protected LoadMode mLoadMode = LoadMode.AUTO_LOAD;
+    private LoadMode mLoadMode = LoadMode.AUTO_LOAD;
 
-    protected int mState = IDEL;
+    private int mState = IDEL;
 
-    protected OnRefreshListener mRefreshListener;
-    protected OnLoadMoreListener mLoadMoreListener;
-    protected OnScrollListener mScrollListener;
+    private OnRefreshListener mRefreshListener;
+    private OnLoadMoreListener mLoadMoreListener;
+    private OnScrollListener mScrollListener;
 
     public PullExpandableListView(Context context) {
         super(context);
-        initView(context);
+        initView(context, null);
     }
 
     public PullExpandableListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView(context);
+        initView(context, attrs);
     }
 
     public PullExpandableListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView(context);
+        initView(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public PullExpandableListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initView(context);
+        initView(context, attrs);
     }
 
     @Override
@@ -354,6 +355,40 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     }
 
     /**
+     * Show loading view on foot<br>
+     * <br><p>Use this method when header view was added on PullListView.
+     *
+     * @param text
+     */
+    public void onFootLoading(CharSequence text) {
+        mState = LOADING;
+        mFooterView.setPadding(0, 0, 0, 0);
+        mFooterView.setArrowVisibility(View.GONE);
+        mFooterView.setProgressVisibility(View.VISIBLE);
+        mFooterView.setTitileVisibility(View.VISIBLE);
+        mFooterView.startArrowAnimation(null);
+        mFooterView.setTitleText(text);
+        mFooterView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Show loading view on foot<br>
+     * <br><p>Use this method when header view was added on PullListView.
+     *
+     * @param resId
+     */
+    public void onFootLoading(int resId) {
+        mState = LOADING;
+        mFooterView.setPadding(0, 0, 0, 0);
+        mFooterView.setArrowVisibility(View.GONE);
+        mFooterView.setProgressVisibility(View.VISIBLE);
+        mFooterView.setTitileVisibility(View.VISIBLE);
+        mFooterView.startArrowAnimation(null);
+        mFooterView.setTitleText(resId);
+        mFooterView.setVisibility(View.VISIBLE);
+    }
+
+    /**
      * Set last refresh time<br>
      * <p>The value of {@link #mLastRefreshTime} initialized to the time when create {@link com.opensource.pullview.PullListView} object.<br>
      * You can set this value.
@@ -446,40 +481,6 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
     }
 
     /**
-     * Show loading view on foot<br>
-     * <br><p>Use this method when header view was added on PullListView.
-     *
-     * @param text
-     */
-    public void onFootLoading(CharSequence text) {
-        mState = LOADING;
-        mFooterView.setPadding(0, 0, 0, 0);
-        mFooterView.setArrowVisibility(View.GONE);
-        mFooterView.setProgressVisibility(View.VISIBLE);
-        mFooterView.setTitileVisibility(View.VISIBLE);
-        mFooterView.startArrowAnimation(null);
-        mFooterView.setTitleText(text);
-        mFooterView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Show loading view on foot<br>
-     * <br><p>Use this method when header view was added on PullListView.
-     *
-     * @param resId
-     */
-    public void onFootLoading(int resId) {
-        mState = LOADING;
-        mFooterView.setPadding(0, 0, 0, 0);
-        mFooterView.setArrowVisibility(View.GONE);
-        mFooterView.setProgressVisibility(View.VISIBLE);
-        mFooterView.setTitileVisibility(View.VISIBLE);
-        mFooterView.startArrowAnimation(null);
-        mFooterView.setTitleText(resId);
-        mFooterView.setVisibility(View.VISIBLE);
-    }
-
-    /**
      * Sets listener to listen refresh action
      *
      * @param listener
@@ -540,7 +541,22 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
         return mEnableLoadMore;
     }
 
-    private void initView(Context context) {
+    private void initView(Context context, AttributeSet attrs) {
+        if(null != attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullView);
+            if(a.hasValue(R.styleable.PullView_loadMode)) {
+                int loadMoreMode = a.getInt(R.styleable.PullView_loadMode, LoadMode.AUTO_LOAD.value());
+                LoadMode loadMode = LoadMode.valueOf(loadMoreMode);
+                if(null != loadMode) {
+                    setLoadMode(loadMode);
+                }
+            }
+            if(a.hasValue(R.styleable.PullView_overScroll)) {
+                mEnableOverScroll = a.getBoolean(R.styleable.PullView_overScroll, true);
+            }
+            a.recycle();
+        }
+
         mDownToUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
         mDownToUpAnimation.setDuration(ROTATE_ANIMATION_DURATION);

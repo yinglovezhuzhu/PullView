@@ -46,7 +46,29 @@ public interface IPullView {
      * When you scroll to the end of the PullView, it will auto load data, if it has more data.
      */
     public static enum LoadMode {
-        PULL_TO_LOAD, AUTO_LOAD,
+
+        PULL_TO_LOAD(0), AUTO_LOAD(1);
+
+        private int value = 0;
+
+        LoadMode(int value) {
+            this.value = value;
+        }
+
+        public static LoadMode valueOf(int value) {
+            switch (value) {
+                case 0:
+                    return PULL_TO_LOAD;
+                case 1:
+                    return AUTO_LOAD;
+                default:
+                    return null;
+            }
+        }
+
+        public int value() {
+            return this.value;
+        }
     }
 
 }
