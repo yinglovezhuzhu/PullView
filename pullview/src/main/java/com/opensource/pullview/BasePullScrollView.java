@@ -18,7 +18,10 @@
 
 package com.opensource.pullview;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -97,7 +100,7 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      */
     public BasePullScrollView(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     /**
@@ -108,7 +111,18 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      */
     public BasePullScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
+    }
+
+    public BasePullScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public BasePullScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
     }
 
     @Override
@@ -336,8 +350,15 @@ public abstract class BasePullScrollView extends ScrollView implements IPullView
      *
      * @param context the context
      */
-    private void init(Context context) {
+    private void init(Context context, AttributeSet attrs) {
 
+        if(null != attrs) {
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullView);
+            if(a.hasValue(R.styleable.PullView_overScroll)) {
+                mEnableOverScroll = a.getBoolean(R.styleable.PullView_overScroll, false);
+            }
+            a.recycle();
+        }
         mDownToUpAnimation = new RotateAnimation(0f, -180f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         mDownToUpAnimation.setInterpolator(new LinearInterpolator());
         mDownToUpAnimation.setDuration(ROTATE_ANIMATION_DURATION);

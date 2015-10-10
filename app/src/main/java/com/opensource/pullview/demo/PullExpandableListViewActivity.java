@@ -85,23 +85,23 @@ public class PullExpandableListViewActivity extends Activity {
         mAdapter = new ExAdapter(this);
         mPullExpandableListView.setAdapter(mAdapter);
 
-        mPullExpandableListView.setOnRefreshListener(new OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
-                Log.e(TAG, "Start refresh+=====================^_^");
-            }
-        });
-
-        mPullExpandableListView.setOnLoadMoreListener(new OnLoadMoreListener() {
-
-            @Override
-            public void onLoadMore() {
-                mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
-                Log.e(TAG, "Start load more+=====================^_^");
-            }
-        });
+//        mPullExpandableListView.setOnRefreshListener(new OnRefreshListener() {
+//
+//            @Override
+//            public void onRefresh() {
+//                mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
+//                Log.e(TAG, "Start refresh+=====================^_^");
+//            }
+//        });
+//
+//        mPullExpandableListView.setOnLoadMoreListener(new OnLoadMoreListener() {
+//
+//            @Override
+//            public void onLoadMore() {
+//                mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
+//                Log.e(TAG, "Start load more+=====================^_^");
+//            }
+//        });
 
         mPullExpandableListView.onFootLoading("正在加载");
         mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
