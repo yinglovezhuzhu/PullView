@@ -24,17 +24,15 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import com.opensource.pullview.OnLoadMoreListener;
 import com.opensource.pullview.OnRefreshListener;
@@ -120,7 +118,16 @@ public class PullListViewActivity extends Activity {
 //		mListView.addHeaderView(iv3);
 		
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
-		mListView.setAdapter(mAdapter);
+		List<String> datas = new ArrayList<>();
+		for(int i = 0; i < 20; i++) {
+			datas.add("Datas-->" + i);
+		}
+
+		PLAdapter adapter = new PLAdapter(this);
+		adapter.addAll(datas);
+		mListView.setAdapter(adapter);
+
+//		mListView.setAdapter(mAdapter);
 
         mListView.setEnableOverScroll(false);
 		
@@ -151,6 +158,19 @@ public class PullListViewActivity extends Activity {
 
 		private Context mmContext;
 		private List<String> mDatas = new ArrayList<>();
+
+		private View mItemView1;
+		private View mItemView2;
+		private View mItemView3;
+		private View mItemView4;
+		private View mItemView5;
+
+		private int dmWidth;
+
+		public PLAdapter(Context context) {
+			this.mmContext = context;
+			dmWidth = mmContext.getResources().getDisplayMetrics().widthPixels;
+		}
 
 		private void addAll(Collection<String> datas) {
 			if(null == datas || datas.isEmpty()) {
@@ -186,22 +206,26 @@ public class PullListViewActivity extends Activity {
 		@Override
 		public String [] getItem(int position) {
 			String [] item;
-			if(mDatas.size() < 3) {
+			if(mDatas.size() < 3) { // 0~2 每行一张图片（二、三行有广告）
 				item = new String [] {mDatas.get(position), };
-			} else if(mDatas.size() < 8) {
+			} else if(mDatas.size() < 8) { // 3~4 每行两张图片
 				item = new String[2];
-				int index = 3;
-				for(int i = 0; i < 2; i++) {
-					item[i] = mDatas.get(index);
-					index++;
-					if(index >= mDatas.size()) {
-						break;
-					}
+				int startIndex = (position - 3) * 2 + 3;
+				for(int i = startIndex; i < startIndex + 2; i++) {
+					item[i - startIndex] = mDatas.get(startIndex);
 				}
-			} else if(mDatas.size() < 17) {
+			} else if(mDatas.size() < 17) {// 5~7 每行三张图片
 				item = new String[3];
-			} else {
+				int startIndex = (position - 5) * 3 + 7;
+				for(int i = startIndex; i < startIndex + 3; i++) {
+					item[i - startIndex] = mDatas.get(startIndex);
+				}
+			} else { // 8~无穷每行四张图片
 				item = new String[4];
+				int startIndex = (position - 8) * 4 + 16;
+				for(int i = startIndex; i < startIndex + 3; i++) {
+					item[i - startIndex] = mDatas.get(startIndex);
+				}
 			}
 			return item;
 		}
@@ -213,7 +237,67 @@ public class PullListViewActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			return null;
+			if(position == 0) { // 0行一张图片
+				if(null == convertView || convertView.getId() != 1) {
+					convertView = View.inflate(mmContext, R.layout.item_one_image_in_row, null);
+					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth));
+					convertView.setId(1);
+				}
+//				if(null == mItemView1) {
+//					mItemView1 = View.inflate(mmContext, R.layout.item_one_image_in_row, null);
+//					mItemView1.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth));
+//				}
+//				convertView = mItemView1;
+			} else if(position < 3) { // 1~2行一张图片+广告
+				if(null == convertView || convertView.getId() != 2) {
+					convertView = View.inflate(mmContext, R.layout.item_one_image_in_row_with_add, null);
+					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4 * 3));
+					convertView.setId(2);
+				}
+//				if(null == mItemView2) {
+//					mItemView2 = View.inflate(mmContext, R.layout.item_one_image_in_row_with_add, null);
+//					mItemView2.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4 * 3));
+//				}
+//				convertView = mItemView2;
+
+			} else if(position < 5) { // 3~4行两张图片
+				if(null == convertView || convertView.getId() != 3) {
+					convertView = View.inflate(mmContext, R.layout.item_two_image_in_row, null);
+					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 2));
+					convertView.setId(3);
+				}
+//				if(null == mItemView3) {
+//					mItemView3 = View.inflate(mmContext, R.layout.item_two_image_in_row, null);
+//					mItemView3.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 2));
+//				}
+//				convertView = mItemView3;
+
+			} else if(position < 8) { /// 5~7行三张图片
+				if(null == convertView || convertView.getId() != 4) {
+					convertView = View.inflate(mmContext, R.layout.item_three_image_in_row, null);
+					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 3));
+					convertView.setId(4);
+				}
+//				if(null == mItemView4) {
+//					mItemView4 = View.inflate(mmContext, R.layout.item_three_image_in_row, null);
+//					mItemView4.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 3));
+//				}
+//				convertView = mItemView4;
+
+			} else { //8~无穷行四张图片
+				if(null == convertView || convertView.getId() != 5) {
+					convertView = View.inflate(mmContext, R.layout.item_four_image_in_row, null);
+					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4));
+					convertView.setId(5);
+				}
+//				if(null == mItemView5) {
+//					mItemView5 = View.inflate(mmContext, R.layout.item_four_image_in_row, null);
+//					mItemView5.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4));
+//				}
+//				convertView = mItemView5;
+
+			}
+			return convertView;
 		}
 	}
 }
