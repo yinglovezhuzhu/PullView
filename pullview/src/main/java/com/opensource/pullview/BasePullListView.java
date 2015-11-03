@@ -217,9 +217,8 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                         case RELEASE_TO_LOAD:
                             if (mEnableLoadMore) {
                                 //Release to load more data.
-                                loadMore();
-                                mState = LOADING;
                                 updateFooterViewByState(0);
+                                loadMore();
                             } else {
                                 mState = IDEL;
                                 updateFooterViewByState(-mFooterView.mViewHeight);
@@ -260,6 +259,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
             return;
         }
         mRefreshing = false;
+        mState = LOADING;
         mLoadMoreListener.onLoadMore();
     }
 
@@ -271,6 +271,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
             return;
         }
         mRefreshing = true;
+        mState = LOADING;
         mRefreshListener.onRefresh();
     }
 

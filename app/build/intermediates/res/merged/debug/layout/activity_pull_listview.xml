@@ -27,7 +27,7 @@
 	    android:layout_height="match_parent"
 	    android:footerDividersEnabled="true"
 	    android:headerDividersEnabled="false"
-        android:divider="#FFAEAEAE"
-        android:dividerHeight="0.5dip"/>
+        android:divider="#FF808080"
+        android:dividerHeight="0.5dp"/>
 </LinearLayout>
 <!-- From: file:/E:/AndroidStudioProjects/PullView/app/src/main/res/layout/activity_pull_listview.xml -->

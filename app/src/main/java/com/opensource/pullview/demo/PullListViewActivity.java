@@ -123,181 +123,30 @@ public class PullListViewActivity extends Activity {
 			datas.add("Datas-->" + i);
 		}
 
-		PLAdapter adapter = new PLAdapter(this);
-		adapter.addAll(datas);
-		mListView.setAdapter(adapter);
-
-//		mListView.setAdapter(mAdapter);
+		mListView.setAdapter(mAdapter);
 
         mListView.setEnableOverScroll(false);
 		
-//		mListView.setOnRefreshListener(new OnRefreshListener() {
-//
-//			@Override
-//			public void onRefresh() {
-//				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
-//				Log.e(TAG, "Start refresh+=====================^_^");
-//			}
-//        });
-//
-//		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
-//
-//			@Override
-//			public void onLoadMore() {
-//				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
-//				Log.e(TAG, "Start load more+=====================^_^");
-//			}
-//        });
+		mListView.setOnRefreshListener(new OnRefreshListener() {
+
+			@Override
+			public void onRefresh() {
+				mHandler.sendEmptyMessageDelayed(MSG_REFLESH_DONE, 5000);
+				Log.e(TAG, "Start refresh+=====================^_^");
+			}
+        });
+
+		mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
+
+			@Override
+			public void onLoadMore() {
+				mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 5000);
+				Log.e(TAG, "Start load more+=====================^_^");
+			}
+        });
 		
 		mListView.onFootLoading("正在加载");
 		mHandler.sendEmptyMessageDelayed(MSG_LOAD_DONE, 3000);
 	}
 
-
-	private class PLAdapter extends BaseAdapter {
-
-		private Context mmContext;
-		private List<String> mDatas = new ArrayList<>();
-
-		private View mItemView1;
-		private View mItemView2;
-		private View mItemView3;
-		private View mItemView4;
-		private View mItemView5;
-
-		private int dmWidth;
-
-		public PLAdapter(Context context) {
-			this.mmContext = context;
-			dmWidth = mmContext.getResources().getDisplayMetrics().widthPixels;
-		}
-
-		private void addAll(Collection<String> datas) {
-			if(null == datas || datas.isEmpty()) {
-				return;
-			}
-			mDatas.addAll(datas);
-			notifyDataSetChanged();
-		}
-
-
-		@Override
-		public int getCount() {
-			int count = 0;
-			int size = 0;
-			if(mDatas.size() < 3) {
-				count = mDatas.size();
-			} else if(mDatas.size() < 8) {
-				count = 3;
-				size = mDatas.size() - count;
-				count += size % 2 == 0 ? size / 2 : size / 2 + 1;
-			} else if(mDatas.size() < 17) {
-				count = 7;
-				size = mDatas.size() - count;
-				count += size % 3 == 0 ? size / 3 : size / 3 + 1;
-			} else {
-				count = 16;
-				size = mDatas.size() - count;
-				count += size % 4 == 0 ? size / 4 : size / 4 + 1;
-			}
-			return count;
-		}
-
-		@Override
-		public String [] getItem(int position) {
-			String [] item;
-			if(mDatas.size() < 3) { // 0~2 每行一张图片（二、三行有广告）
-				item = new String [] {mDatas.get(position), };
-			} else if(mDatas.size() < 8) { // 3~4 每行两张图片
-				item = new String[2];
-				int startIndex = (position - 3) * 2 + 3;
-				for(int i = startIndex; i < startIndex + 2; i++) {
-					item[i - startIndex] = mDatas.get(startIndex);
-				}
-			} else if(mDatas.size() < 17) {// 5~7 每行三张图片
-				item = new String[3];
-				int startIndex = (position - 5) * 3 + 7;
-				for(int i = startIndex; i < startIndex + 3; i++) {
-					item[i - startIndex] = mDatas.get(startIndex);
-				}
-			} else { // 8~无穷每行四张图片
-				item = new String[4];
-				int startIndex = (position - 8) * 4 + 16;
-				for(int i = startIndex; i < startIndex + 3; i++) {
-					item[i - startIndex] = mDatas.get(startIndex);
-				}
-			}
-			return item;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if(position == 0) { // 0行一张图片
-				if(null == convertView || convertView.getId() != 1) {
-					convertView = View.inflate(mmContext, R.layout.item_one_image_in_row, null);
-					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth));
-					convertView.setId(1);
-				}
-//				if(null == mItemView1) {
-//					mItemView1 = View.inflate(mmContext, R.layout.item_one_image_in_row, null);
-//					mItemView1.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth));
-//				}
-//				convertView = mItemView1;
-			} else if(position < 3) { // 1~2行一张图片+广告
-				if(null == convertView || convertView.getId() != 2) {
-					convertView = View.inflate(mmContext, R.layout.item_one_image_in_row_with_add, null);
-					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4 * 3));
-					convertView.setId(2);
-				}
-//				if(null == mItemView2) {
-//					mItemView2 = View.inflate(mmContext, R.layout.item_one_image_in_row_with_add, null);
-//					mItemView2.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4 * 3));
-//				}
-//				convertView = mItemView2;
-
-			} else if(position < 5) { // 3~4行两张图片
-				if(null == convertView || convertView.getId() != 3) {
-					convertView = View.inflate(mmContext, R.layout.item_two_image_in_row, null);
-					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 2));
-					convertView.setId(3);
-				}
-//				if(null == mItemView3) {
-//					mItemView3 = View.inflate(mmContext, R.layout.item_two_image_in_row, null);
-//					mItemView3.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 2));
-//				}
-//				convertView = mItemView3;
-
-			} else if(position < 8) { /// 5~7行三张图片
-				if(null == convertView || convertView.getId() != 4) {
-					convertView = View.inflate(mmContext, R.layout.item_three_image_in_row, null);
-					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 3));
-					convertView.setId(4);
-				}
-//				if(null == mItemView4) {
-//					mItemView4 = View.inflate(mmContext, R.layout.item_three_image_in_row, null);
-//					mItemView4.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 3));
-//				}
-//				convertView = mItemView4;
-
-			} else { //8~无穷行四张图片
-				if(null == convertView || convertView.getId() != 5) {
-					convertView = View.inflate(mmContext, R.layout.item_four_image_in_row, null);
-					convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4));
-					convertView.setId(5);
-				}
-//				if(null == mItemView5) {
-//					mItemView5 = View.inflate(mmContext, R.layout.item_four_image_in_row, null);
-//					mItemView5.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dmWidth / 4));
-//				}
-//				convertView = mItemView5;
-
-			}
-			return convertView;
-		}
-	}
 }

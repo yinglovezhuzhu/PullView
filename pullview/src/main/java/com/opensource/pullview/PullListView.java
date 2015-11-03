@@ -158,9 +158,8 @@ public class PullListView extends BasePullListView {
                         case RELEASE_TO_LOAD:
                             if (mEnablePullRefresh) {
                                 //Release to refresh.
-                                refresh();
-                                mState = LOADING;
                                 updateHeaderViewByState(0);
+                                refresh();
                             } else {
                                 mState = IDEL;
                                 updateHeaderViewByState(-mHeaderView.mViewHeight);
