@@ -160,6 +160,7 @@ public class PullListView extends BasePullListView {
                                 //Release to refresh.
                                 updateHeaderViewByState(0);
                                 refresh();
+                                updateHeaderViewByState(0);
                             } else {
                                 mState = IDEL;
                                 updateHeaderViewByState(-mHeaderView.mViewHeight);

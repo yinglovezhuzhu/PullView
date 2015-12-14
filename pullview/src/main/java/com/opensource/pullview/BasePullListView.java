@@ -62,7 +62,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
     /**
      * Can be over scroll *
      */
-    protected boolean mEnableOverScroll = true;
+    protected boolean mEnableOverScroll = false;
 
     protected LoadMode mLoadMode = LoadMode.AUTO_LOAD;
 
@@ -219,6 +219,7 @@ public abstract class BasePullListView extends ListView implements IPullView, Ab
                                 //Release to load more data.
                                 updateFooterViewByState(0);
                                 loadMore();
+                                updateFooterViewByState(0);
                             } else {
                                 mState = IDEL;
                                 updateFooterViewByState(-mFooterView.mViewHeight);

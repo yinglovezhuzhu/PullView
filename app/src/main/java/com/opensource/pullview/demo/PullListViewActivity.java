@@ -125,7 +125,7 @@ public class PullListViewActivity extends Activity {
 
 		mListView.setAdapter(mAdapter);
 
-        mListView.setEnableOverScroll(false);
+        mListView.setEnableOverScroll(true);
 		
 		mListView.setOnRefreshListener(new OnRefreshListener() {
 
