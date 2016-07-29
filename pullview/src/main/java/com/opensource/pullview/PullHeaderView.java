@@ -101,7 +101,7 @@ public class PullHeaderView extends LinearLayout {
      *
      * @param visibility
      */
-    public void setTitileVisibility(int visibility) {
+    public void setTitleVisibility(int visibility) {
         mTvTitle.setVisibility(visibility);
     }
 

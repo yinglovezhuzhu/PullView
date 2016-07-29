@@ -329,7 +329,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
         mHeaderView.setPadding(0, 0, 0, 0);
         mHeaderView.setArrowVisibility(View.GONE);
         mHeaderView.setProgressVisibility(View.VISIBLE);
-        mHeaderView.setTitileVisibility(View.VISIBLE);
+        mHeaderView.setTitleVisibility(View.VISIBLE);
         mHeaderView.setLabelVisibility(View.GONE);
         mHeaderView.startArrowAnimation(null);
         mHeaderView.setTitleText(text);
@@ -347,7 +347,7 @@ public class PullExpandableListView extends ExpandableListView implements IPullV
         mHeaderView.setPadding(0, 0, 0, 0);
         mHeaderView.setArrowVisibility(View.GONE);
         mHeaderView.setProgressVisibility(View.VISIBLE);
-        mHeaderView.setTitileVisibility(View.VISIBLE);
+        mHeaderView.setTitleVisibility(View.VISIBLE);
         mHeaderView.setLabelVisibility(View.GONE);
         mHeaderView.startArrowAnimation(null);
         mHeaderView.setTitleText(resId);

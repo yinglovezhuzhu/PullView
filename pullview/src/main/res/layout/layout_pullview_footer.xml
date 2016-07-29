@@ -40,7 +40,9 @@
             android:id="@+id/pb_pullview_footer_progress"
             android:layout_width="@dimen/pullview_footer_progress_size"
             android:layout_height="@dimen/pullview_footer_progress_size"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_indeterminate"/>
     </FrameLayout>
     <TextView
         android:id="@+id/tv_pullview_footer_title"

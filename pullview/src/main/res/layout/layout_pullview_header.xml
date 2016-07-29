@@ -42,13 +42,15 @@
             android:id="@+id/pb_pullview_header_progress"
             android:layout_width="@dimen/pullview_header_progress_size"
             android:layout_height="@dimen/pullview_header_progress_size"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_indeterminate"/>
     </FrameLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/pullview_header_title_margingLeft"
-        android:layout_marginStart="@dimen/pullview_header_title_margingLeft"
+        android:layout_marginLeft="@dimen/pullview_header_title_marginLeft"
+        android:layout_marginStart="@dimen/pullview_header_title_marginLeft"
         android:gravity="center_vertical|left"
         android:orientation="vertical">
         <TextView
